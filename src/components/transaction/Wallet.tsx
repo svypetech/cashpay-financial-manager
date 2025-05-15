@@ -18,8 +18,6 @@ const headings = [
 
 export default function Wallet() {
   const [currentPage, setCurrentPage] = useState(1);
-
-  const [activeTab, setActiveTab] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredData, setFilteredData] = useState([]);
   const handlePageChange = (page: number) => {

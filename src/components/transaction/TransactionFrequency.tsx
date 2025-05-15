@@ -24,9 +24,11 @@ export default function TransactionFrequencyPage() {
   const [filteredTransactions, setFilteredTransactions] = useState([]);
 
   const { transactions, isLoading, isError, totalPages } = useFetchTransactions(
-    currentPage,
-    10,
-    ""
+    {
+      currentPage,
+      limit: 10,
+      searchQuery: searchQuery,
+    }
   );
 
   const handlePageChange = (page: number) => {

@@ -2,7 +2,7 @@ import useFetchUsers from "@/src/hooks/useFetchUsers";
 import SkeletonTableLoader from "../skeletons/SkeletonTableLoader";
 
 export default function NewUsers() {
-  const { users, isLoading, isError } = useFetchUsers(1, 3,"");
+  const { users, isLoading, isError } = useFetchUsers({ currentPage: 1, limit: 3 });
 
   return (
     <div className="bg-white rounded-lg border border-gray-200">

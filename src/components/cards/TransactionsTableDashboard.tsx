@@ -6,7 +6,7 @@ import SkeletonTableLoader from "../skeletons/SkeletonTableLoader";
 const headings = ["ID", "From → To", "Status", "Block#", "Date"];
 
 export default function TransactionsTableDashboard() {
-  const { transactions, isLoading, isError } = useTransaction(1, 3,"");
+  const { transactions, isLoading, isError } = useTransaction({currentPage: 1, limit: 3});
   return (
     <div className="lg:col-span-3 bg-white rounded-lg shadow-sm md:p-4 p-2">
       <div className="flex justify-between items-center mb-4">
