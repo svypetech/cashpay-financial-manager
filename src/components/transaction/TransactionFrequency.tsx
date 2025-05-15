@@ -1,77 +1,119 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Pagination from "../pagination/pagination";
-import UserTable from "../tables/UserTable";
 import TransactionFrequencyTable from "../tables/TransactionFrequencyTable";
+import useFetchTransactions from "@/src/hooks/useFetchTransactions";
+import SkeletonTableLoader from "../skeletons/SkeletonTableLoader";
+import Image from "next/image";
+import Search from "../ui/Search";
+import Transaction from "@/src/lib/types/Transactions";
 
-const headings = ["Transaction ID", "User ID", "Currency", "Amount", "Status", "Timestamp"];
-
-const data = [
-  {
-    id: "TXN-1001",
-    userId: "CP-001",
-    currency: "BTC",
-    amount: 1.35,
-    status: "Pending",
-    timestamp: "2025-03-10 10:00",
-  },
-  {
-    id: "TXN-1001",
-    userId: "CP-001",
-    currency: "BTC",
-    amount: 1.35,
-    status: "Pending",
-    timestamp: "2025-03-10 10:00",
-  },
-  {
-    id: "TXN-1001",
-    userId: "CP-001",
-    currency: "BTC",
-    amount: 1.35,
-    status: "Pending",
-    timestamp: "2025-03-10 10:00",
-  },
-  {
-    id: "TXN-1001",
-    userId: "CP-001",
-    currency: "BTC",
-    amount: 1.35,
-    status: "Pending",
-    timestamp: "2025-03-10 10:00",
-  },
-  {
-    id: "TXN-1001",
-    userId: "CP-001",
-    currency: "BTC",
-    amount: 1.35,
-    status: "Pending",
-    timestamp: "2025-03-10 10:00",
-  },
-  {
-    id: "TXN-1001",
-    userId: "CP-001",
-    currency: "BTC",
-    amount: 1.35,
-    status: "Pending",
-    timestamp: "2025-03-10 10:00",
-  },
+const headings = [
+  "Transaction ID",
+  "User ID",
+  "Currency",
+  "Amount",
+  "Status",
+  "Timestamp",
 ];
 
-
 export default function TransactionFrequencyPage() {
-    const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(15); // Example total pages
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filteredTransactions, setFilteredTransactions] = useState([]);
+
+  const { transactions, isLoading, isError, totalPages } = useFetchTransactions(
+    currentPage,
+    10,
+    ""
+  );
 
   const handlePageChange = (page: number) => {
-    // Handle page change logic here
     setCurrentPage(page);
-  }
+  };
 
-    return (
-        <div>
-            <TransactionFrequencyTable headings={headings} data={data} />
-            <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange} />
+  const handleSearch = (value: string) => {
+    setSearchQuery(value);
+  };
+
+  // Filter transactions based on search query (by user ID)
+  useEffect(() => {
+    if (!transactions) return;
+
+    if (!searchQuery) {
+      setFilteredTransactions(transactions);
+      return;
+    }
+
+    const query = searchQuery.toLowerCase();
+    const filtered = transactions.filter((transaction: Transaction) => {
+      const userId = transaction.userId?.toLowerCase() || "";
+      return userId.includes(query);
+    });
+
+    setFilteredTransactions(filtered);
+  }, [searchQuery, transactions]);
+
+  return (
+    <div>
+      <h1 className="text-3xl font-[satoshi] font-bold my-10">
+        Transaction Frequency
+      </h1>
+
+      {/* Search and Actions */}
+      <div className="flex flex-col md:grid md:grid-cols-4 justify-between items-center mb-6 gap-4">
+        <div className="relative w-full md:w-auto md:col-span-2">
+          <Search className="w-full" onSearch={handleSearch} />
         </div>
-    )
+
+        <div className="flex items-center gap-4 w-full md:col-span-2 font-[satoshi]">
+          <button className="w-[50%] flex justify-between items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50">
+            <span>Filter</span>
+            <Image
+              src="/icons/calendar.svg"
+              alt="Calendar"
+              width={24}
+              height={24}
+            />
+          </button>
+
+          <button className="w-[50%] flex justify-center items-center gap-2 px-4 py-2 font-bold border border-primary rounded-lg text-primary bg-white hover:bg-blue-50 ml-auto md:ml-0">
+            <span>Download</span>
+            <Image
+              src="/icons/download.svg"
+              alt="Download"
+              width={24}
+              height={24}
+            />
+          </button>
+        </div>
+      </div>
+
+      {isLoading ? (
+        <SkeletonTableLoader headings={headings} rowCount={10} />
+      ) : isError ? (
+        <div className="flex items-center justify-center h-[400px]">
+          <p className="text-red-500">Error loading transactions</p>
+        </div>
+      ) : filteredTransactions.length === 0 ? (
+        <div className="flex items-center justify-center h-[200px]">
+          <p className="text-gray-500">
+            No transactions found matching your search
+          </p>
+        </div>
+      ) : (
+        <TransactionFrequencyTable
+          headings={headings}
+          data={filteredTransactions}
+        />
+      )}
+
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={handlePageChange}
+      />
+    </div>
+  );
 }

@@ -1,63 +1,44 @@
 "use client";
 
-import Image from "next/image";
 import type React from "react";
-import { useEffect, useState, useRef } from "react";
-import WalletSidebar from "../transaction/WalletSidebar";
-import { Wallet } from "@/src/lib/types/Wallet";
-import axios from "axios";
-import { formatNumberToTwoDecimals } from "@/src/utils/functions";
+import { useState, useRef, useEffect } from "react";
+import ListingDetailsPopup from "../p2pListing/p2pDetailsPopUp";
+import Image from "next/image";
+import { Listing } from "@/src/lib/types/Listing";
+
 interface Props {
   headings: string[];
-  data: Wallet[];
+  data: Listing[];
 }
 
-const WalletTable: React.FC<Props> = ({ data, headings }) => {
+const ListingsTable: React.FC<Props> = ({ data, headings }) => {
   const [activeDropdown, setActiveDropdown] = useState<number | null>(null);
-  const [showSidebar, setShowSidebar] = useState(false);
-  const [selectedWallet, setSelectedWallet] = useState<Wallet | null>(null);
+  const [showPopup, setShowPopup] = useState(false);
+  const [selectedListing, setSelectedListing] = useState<Listing>(
+    {} as Listing
+  );
   const tableRef = useRef<HTMLDivElement>(null);
   const dropdownRefs = useRef<(HTMLDivElement | null)[]>([]);
 
-  const banUser = async (userId: string) => {
-    try {
-      await axios.put(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}user/banUser/`,
-        {
-          id: userId,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
-    } catch (error) {
-      alert("Error banning user");
-    } finally {
-      setActiveDropdown(null);
+  const getColumnWidthClass = (index: number): string => {
+    switch (index) {
+      case 0:
+        return "w-[15%]"; // User ID
+      case 1:
+        return "w-[20%]"; // Username
+      case 2:
+        return "w-[15%]"; // Card User
+      case 3:
+        return "w-[20%]"; // Crypto Holdings
+      case 4:
+        return "w-[20%]"; // Total Balance
+      case 5:
+        return "w-[10%]"; // Actions
+      default:
+        return "w-[16.67%]"; // Equal distribution
     }
   };
 
-  const suspendUser = (userId: string) => {
-    try {
-      axios.put(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}user/suspendUser/`,
-        {
-          id: userId,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
-    } catch (error) {
-      alert("Error suspending user");
-    } finally {
-      setActiveDropdown(null);
-    }
-  };
   useEffect(() => {
     // Close dropdown when clicking outside
     const handleClickOutside = (event: MouseEvent) => {
@@ -124,15 +105,17 @@ const WalletTable: React.FC<Props> = ({ data, headings }) => {
   return (
     <div className="flex-1 rounded-lg w-full py-5">
       {/* Table */}
-      <div
-        className="rounded-lg overflow-x-auto w-full min-h-[200px]"
-        ref={tableRef}
-      >
-        <table className="w-full text-left table-auto min-w-[800px]">
+      <div className="rounded-lg overflow-x-auto w-full" ref={tableRef}>
+        <table className="w-full text-left table-auto overflow-x-auto    min-w-[1100px]">
           <thead className="bg-secondary/10">
-            <tr className="font-satoshi text-[12px] md:text-[16px] p-2 md:p-4">
+            <tr className="whitespace-nowrap text-[12px] md:text-[16px] py-3 md:py-4 px-2 md:px-4">
               {headings.map((heading, index) => (
-                <th key={index} className="p-2 md:p-4 text-left">
+                <th
+                  key={index}
+                  className={`px-2 md:px-4 py-3 md:py-4 text-left ${getColumnWidthClass(
+                    index
+                  )}`}
+                >
                   {heading}
                 </th>
               ))}
@@ -140,35 +123,38 @@ const WalletTable: React.FC<Props> = ({ data, headings }) => {
           </thead>
           <tbody>
             {Array.isArray(data) &&
-              data.map((wallet, index) => (
+              data.map((listing, index) => (
                 <tr
-                  key={index}
-                  className="border-b border-gray-200 text-[12px] md:text-[16px]"
+                  key={listing.id}
+                  className="border-b border-gray-200 text-[12px] md:text-[16px] font-[satoshi]"
                 >
-                  <td className="p-2 md:p-4 font-satoshi min-w-[100px] break-words">
-                    {wallet.userId}
+                  <td className="px-2 md:px-4 py-3 md:py-4 whitespace-nowrap font-bold text-primary min-w-[100px] break-words">
+                    {listing.id}
                   </td>
-                  <td className="p-2 md:p-4 font-satoshi font-bold text-primary min-w-[120px] break-words">
-                    {wallet.userName
-                      ? wallet.userName.firstName +
-                        " " +
-                        wallet.userName.lastName
-                      : "N/A"}
+                  <td className="px-2 md:px-4 py-3 md:py-4 whitespace-nowrap min-w-[120px] break-words">
+                    {listing.createdBy}
                   </td>
-                  <td className="p-2 md:p-4 font-satoshi min-w-[150px] break-words">
-                    {wallet.cardUser ? "True" : "False"}
-                  </td>
-                  <td className="p-2 md:p-4 font-satoshi min-w-[120px]">
-                    <span className="relative left-[30px]">
-                      {wallet.cryptoHoldings}
-                    </span>
-                  </td>
-                  <td className="p-2 md:p-4 font-satoshi min-w-[100px]">
-                    {formatNumberToTwoDecimals(wallet.totalBalanceUSD)}
-                  </td>
-                  <td className="relative p-2 md:p-4 font-satoshi min-w-[60px] ">
 
-                    <div className="dropdown-container  ">
+                  <td className="px-2 md:px-4 py-3 md:py-4 whitespace-nowrap min-w-[150px] break-words">
+                    {listing.type}
+                  </td>
+                  <td className="px-2 md:px-4 py-3 md:py-4 whitespace-nowrap min-w-[150px] break-words">
+                    {listing.currency}
+                  </td>
+                  <td className="px-2 md:px-4 py-3 md:py-4 whitespace-nowrap min-w-[120px]">
+                    {listing.addVisibility === true && (
+                      <span className="text-left bg-[#71FB5533] text-[#20C000] px-2 py-2 rounded-xl text-xs md:text-base font-semibold whitespace-nowrap flex justify-center items-center w-[100px]">
+                        Active
+                      </span>
+                    )}
+                    {listing.addVisibility === false && (
+                      <span className="text-[#FF0000] bg-[#FF000033] px-2 py-2 rounded-xl text-xs md:text-base font-semibold whitespace-nowrap flex justify-center items-center w-[100px]">
+                        Inactive
+                      </span>
+                    )}
+                  </td>
+                  <td className="relative p-2 md:p-4 font-satoshi min-w-[60px] text-center">
+                    <div className="dropdown-container relative">
                       <button
                         className="absolute right-0 md:relative md:right-auto cursor-pointer"
                         onClick={() => toggleDropdown(index)}
@@ -178,7 +164,7 @@ const WalletTable: React.FC<Props> = ({ data, headings }) => {
                           alt="Options"
                           width={24}
                           height={24}
-                          className="w-4 h-4 relative left-[20px]"
+                          className="w-4 h-4 relative sm:left-0 left-[-50px]"
                         />
                       </button>
 
@@ -192,28 +178,18 @@ const WalletTable: React.FC<Props> = ({ data, headings }) => {
                           <button
                             className="block w-full text-left px-4 py-2 text-sm text-primary font-bold cursor-pointer hover:bg-gray-50"
                             onClick={() => {
-                              setSelectedWallet(wallet);
-                              setShowSidebar(true);
+                              setSelectedListing(listing);
+                              setShowPopup(true);
                             }}
                           >
-                            View Wallet
+                            View Details
                           </button>
                           <div className="border-t border-gray-100"></div>
                           <button
                             className="block w-full text-left px-4 py-2 text-sm text-red-500 font-bold cursor-pointer hover:bg-gray-50"
-                            onClick={() => {
-                              banUser(wallet.userId);
-                            }}
+                            onClick={() => {}}
                           >
-                            Ban User
-                          </button>
-                          <button
-                            className="block w-full text-left px-4 py-2 text-sm text-red-500 font-bold cursor-pointer hover:bg-gray-50"
-                            onClick={() => {
-                              suspendUser(wallet.userId);
-                            }}
-                          >
-                            Suspend User
+                            Delete Listing
                           </button>
                         </div>
                       )}
@@ -225,16 +201,13 @@ const WalletTable: React.FC<Props> = ({ data, headings }) => {
         </table>
       </div>
 
-      {/* Wallet Details Sidebar */}
-      {selectedWallet && selectedWallet.balances.items && (
-        <WalletSidebar
-          showSidebar={showSidebar}
-          onClose={() => setShowSidebar(false)}
-          wallet={selectedWallet}
-        />
-      )}
+      <ListingDetailsPopup
+        showPopup={showPopup}
+        onClose={() => setShowPopup(false)}
+        listing={selectedListing}
+      />
     </div>
   );
 };
 
-export default WalletTable;
+export default ListingsTable;

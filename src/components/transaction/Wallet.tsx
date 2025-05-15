@@ -4,92 +4,46 @@ import { useEffect, useState } from "react";
 import Pagination from "@/src/components/pagination/pagination";
 import Image from "next/image";
 import WalletTable from "@/src/components/tables/WalletTable";
+import useWallet from "@/src/hooks/useFetchWallets";
+import SkeletonTableLoader from "../skeletons/SkeletonTableLoader";
 
-const headings = ["User ID", "Name", "Card User", "Crypto Holdings", "Total Balance (USDT)", "Actions"];
-const data = [
-    {
-      userId: "ID#CP-9203",
-      name: "John Doe",
-      cardUser: true,
-      cryptoHoldings: 5,
-      totalBalance: 1700.00,
-      actions: ["View Wallet", "Ban User", "Suspend User"]
-    },
-    {
-      userId: "ID#CP-9203",
-      name: "Jane Smith",
-      cardUser: true,
-      cryptoHoldings: 5,
-      totalBalance: 1700.00,
-      actions: ["View Wallet", "Ban User", "Suspend User"]
-    },
-    {
-      userId: "ID#CP-9203",
-      name: "Jack Sparrow",
-      cardUser: true,
-      cryptoHoldings: 5,
-      totalBalance: 1700.00,
-      actions: ["View Wallet", "Ban User", "Suspend User"]
-    },
-    {
-      userId: "ID#CP-9203",
-      name: "Daniel Bryan",
-      cardUser: true,
-      cryptoHoldings: 5,
-      totalBalance: 1700.00,
-      actions: ["View Wallet", "Ban User", "Suspend User"]
-    },
-    {
-      userId: "ID#CP-9203",
-      name: "John Wick",
-      cardUser: true,
-      cryptoHoldings: 5,
-      totalBalance: 1700.00,
-      actions: ["View Wallet", "Ban User", "Suspend User"]
-    },
-    {
-      userId: "ID#CP-9203",
-      name: "Arslan Khan",
-      cardUser: true,
-      cryptoHoldings: 5,
-      totalBalance: 1700.00,
-      actions: ["View Wallet", "Ban User", "Suspend User"]
-    },
-    {
-      userId: "ID#CP-9203",
-      name: "Lionel Messi",
-      cardUser: true,
-      cryptoHoldings: 5,
-      totalBalance: 1700.00,
-      actions: ["View Wallet", "Ban User", "Suspend User"]
-    }
-  ];
+const headings = [
+  "User ID",
+  "Name",
+  "Card User",
+  "Crypto Holdings",
+  "Total Balance (USDT)",
+  "Actions",
+];
 
 export default function Wallet() {
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(15); // Example total pages
+
   const [activeTab, setActiveTab] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
-  const [filteredData, setFilteredData] = useState(data);
+  const [filteredData, setFilteredData] = useState([]);
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
 
+  let { wallets, loading, isError, totalPages } = useWallet({
+    currentPage,
+    limit: 10,
+    sortBy: "id",
+    searchQuery,
+  });
   useEffect(() => {
-    const filtered = data.filter((user) => {
-        return (
-            user.userId.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            user.totalBalance.toString().toLowerCase().includes(searchQuery.toLowerCase())
-        );
-    });
-    setFilteredData(filtered);
-  }, [searchQuery]);
+    if (loading) return;
+
+    setFilteredData(wallets);
+  }, [searchQuery, wallets]);
 
   return (
     <div>
       {/* Search and Actions */}
-      <div className={`flex flex-col md:grid md:grid-cols-4 justify-between items-center mb-2 gap-4`}>
+      <div
+        className={`flex flex-col md:grid md:grid-cols-4 justify-between items-center mb-2 gap-4`}
+      >
         <div className={`relative w-full md:w-auto md:col-span-3`}>
           <div className="relative">
             <input
@@ -99,25 +53,46 @@ export default function Wallet() {
               className="w-full pl-4 pr-10 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:gray-700 focus:border-transparent"
             />
             <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-              <Image src="/icons/search.svg" alt="Arrow right" width={24} height={24} />
+              <Image
+                src="/icons/search.svg"
+                alt="Arrow right"
+                width={24}
+                height={24}
+              />
             </div>
           </div>
         </div>
 
-        <div className={`flex items-center gap-4 w-full font-[satoshi] md:col-span-1`}>
+        <div
+          className={`flex items-center gap-4 w-full font-[satoshi] md:col-span-1`}
+        >
           <button className="w-full flex justify-between items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50">
             <span>Sort by</span>
-            <Image src="/icons/dropdownIcon.svg" alt="Arrow right" width={24} height={24} />
+            <Image
+              src="/icons/dropdownIcon.svg"
+              alt="Arrow right"
+              width={24}
+              height={24}
+            />
           </button>
         </div>
-
       </div>
-      <WalletTable headings={headings} data={filteredData} />
-      <Pagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={handlePageChange}
-      />
+      {loading ? (
+        <SkeletonTableLoader rowCount={10} headings={headings} />
+      ) : isError ? (
+        <div className="text-red-500 py-10 text-center">
+          Error loading wallets
+        </div>
+      ) : (
+        <>
+          <WalletTable headings={headings} data={filteredData} />
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+          />
+        </>
+      )}
     </div>
   );
 }

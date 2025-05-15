@@ -19,9 +19,9 @@ export default function UserInsightsPage() {
 
         {/* Bottom Row - New Users and User Insights */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div>
+          
             <NewUsers />
-          </div>
+          
           <div>
             <UserInsights />
           </div>
