@@ -24,7 +24,7 @@ function LayoutContent({ children }: { children: React.ReactNode }) {
     >
       {/* Pass darkMode and setDarkMode to Header */}
       <Header />
-      <main className="flex-grow">{children}</main>
+      <main className="flex-grow pb-[40px]">{children}</main>
       <Footer />
     </div>
   );

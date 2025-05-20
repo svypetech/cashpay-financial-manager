@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import UserTable from "../tables/UserTable";
 import Pagination from "../pagination/pagination";
 import Tabs from "../ui/Tabs";
@@ -90,6 +90,10 @@ export default function UsersComponent() {
 
     return filtered;
   }, [allUsers, activeTab, searchTerm]);
+
+  useEffect(()=>{
+    setCurrentPage(1)
+  },[filterStatus])
 
   return (
     <>

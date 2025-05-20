@@ -1,4 +1,6 @@
 import { formatDistanceToNow } from "date-fns";
+import { useRouter } from "next/navigation";
+
 
 export function shortenAddress(address: string, chars = 6): string {
   if (!address) return "-";
@@ -72,3 +74,28 @@ export function cal_USDT_Value({
   const usdtValue = (Number(balance) / 10 ** contract_decimals) * quote_rate;
   return usdtValue;
 }
+
+export const AuthenticateUser = () => {
+  
+  let user = null;
+  let token = localStorage.getItem("token");
+  try {
+    const userString = localStorage.getItem("user");
+    if (userString) {
+      user = JSON.parse(userString);
+    }
+  } catch (error) {
+    return;
+  }
+  if (
+    !token ||
+    !user ||
+    !(typeof user === "object") ||
+    Object.keys(user).length === 0
+  ) {
+    return false;
+  }
+  else{
+    return true;
+  }
+};

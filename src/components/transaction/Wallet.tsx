@@ -50,7 +50,7 @@ export default function Wallet() {
       <div
         className={`flex flex-col sm:flex-row justify-between items-center mb-2 gap-4 mt-5`}
       >
-        <div className={`relative w-[75%]`}>
+        <div className={`relative w-[70%]`}>
           <Search onSearch={setSearchQuery} />
         </div>
 
@@ -58,7 +58,7 @@ export default function Wallet() {
           title="Sort by"
           options={sortOptions}
           onSort={setSortBy}
-          className="w-[25%]"
+          className="w-[30%]"
         />
       </div>
       {loading ? (

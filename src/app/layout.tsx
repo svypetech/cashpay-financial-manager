@@ -2,23 +2,22 @@
 import { useEffect } from "react";
 import "./globals.css";
 import { useRouter } from "next/navigation";
+import { AuthenticateUser } from "@/src/utils/functions";
 
-
-
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const router = useRouter();
   useEffect(() => {
-      let user = localStorage.getItem("user");
-      let token = localStorage.getItem("token");
-      if (!user || !token) {
-        router.push("/signin");
-      }
-    }, []);
+    if (!AuthenticateUser()) {
+      router.push("/signin");
+    }
+  }, []);
   return (
     <html lang="en">
-      <body >
-        {children}
-      </body>
+      <body>{children}</body>
     </html>
   );
 }

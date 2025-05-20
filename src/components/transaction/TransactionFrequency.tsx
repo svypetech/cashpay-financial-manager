@@ -7,7 +7,7 @@ import useFetchTransactions from "@/src/hooks/useFetchTransactions";
 import SkeletonTableLoader from "../skeletons/SkeletonTableLoader";
 import Image from "next/image";
 import Search from "../ui/Search";
-import Transaction from "@/src/lib/types/Transactions";
+
 import Error from "../ui/Error";
 
 const headings = [
@@ -22,7 +22,7 @@ const headings = [
 export default function TransactionFrequencyPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
-  const [filteredTransactions, setFilteredTransactions] = useState([]);
+  
 
   const { transactions, isLoading, isError, totalPages } = useFetchTransactions(
     {
@@ -40,23 +40,11 @@ export default function TransactionFrequencyPage() {
     setSearchQuery(value);
   };
 
-  // Filter transactions based on search query (by user ID)
+
   useEffect(() => {
-    if (!transactions) return;
-
-    if (!searchQuery) {
-      setFilteredTransactions(transactions);
-      return;
-    }
-
-    const query = searchQuery.toLowerCase();
-    const filtered = transactions.filter((transaction: Transaction) => {
-    const userId = transaction.userId?.toLowerCase() || "";
-    return userId.includes(query);
-    });
-
-    setFilteredTransactions(filtered);
-  }, [searchQuery, transactions]);
+    setCurrentPage(1);
+  }, [searchQuery]);
+  
 
   return (
     <div>
@@ -97,12 +85,12 @@ export default function TransactionFrequencyPage() {
         <SkeletonTableLoader headings={headings} rowCount={10} />
       ) : isError ? (
         <Error text="Something went wrong" />
-      ) : filteredTransactions.length === 0 ? (
+      ) : transactions.length === 0 ? (
         <Error text="No data found" />
       ) : (
         <TransactionFrequencyTable
           headings={headings}
-          data={filteredTransactions}
+          data={transactions}
         />
       )}
 

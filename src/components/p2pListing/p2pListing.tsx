@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Pagination from "../pagination/pagination";
 import Image from "next/image";
 import ListingTable from "@/src/components/tables/p2pListingTable";
@@ -8,6 +8,7 @@ import useFetchP2PListing from "@/src/hooks/useFetchP2PListing";
 import SkeletonTableLoader from "../skeletons/SkeletonTableLoader";
 import Sort from "../ui/Sort";
 import Error from "../ui/Error";
+import Search from "../ui/Search";
 
 const headings = [
   "Listing ID",
@@ -35,7 +36,7 @@ export default function P2PListings() {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("");
 
-  const { listings, totalPages, isLoading,isError } = useFetchP2PListing({
+  const { listings, totalPages, isLoading, isError } = useFetchP2PListing({
     currentPage,
     limit: 10,
     searchQuery,
@@ -46,11 +47,9 @@ export default function P2PListings() {
     setCurrentPage(page);
   };
 
-  // filter based on active tab
-
-  //   if (loading) {
-  //     return <div className="flex justify-center items-center h-screen">Loading...</div>;
-  //   }
+  useEffect(()=>{
+    setCurrentPage(1)
+  },[searchQuery,activeTab,sortBy])
 
   return (
     <div>
@@ -78,22 +77,7 @@ export default function P2PListings() {
         className={`flex sm:flex-row flex-col  justify-between items-center mb-2 gap-4`}
       >
         <div className={`relative w-full sm:w-[70%] `}>
-          <div className={`relative`}>
-            <input
-              onChange={(e) => setSearchQuery(e.target.value)}
-              type="text"
-              placeholder="Search..."
-              className="w-full pl-4 pr-10 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:gray-700 focus:border-transparent"
-            />
-            <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-              <Image
-                src="/icons/search.svg"
-                alt="Arrow right"
-                width={24}
-                height={24}
-              />
-            </div>
-          </div>
+          <Search onSearch={setSearchQuery} />
         </div>
 
         <div
@@ -109,13 +93,11 @@ export default function P2PListings() {
       </div>
       {isLoading ? (
         <SkeletonTableLoader rowCount={10} headings={headings} />
-      ) : 
-      isError ? (
+      ) : isError ? (
         <Error text="Something went wrong" />
       ) : listings.length === 0 ? (
         <Error text="No data found" />
-      ) :
-      (
+      ) : (
         <ListingTable headings={headings} data={listings} />
       )}
       <Pagination
