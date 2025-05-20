@@ -50,8 +50,8 @@ export default function useFetchP2PListing({
           },
         });
 
-        setListings(response.data.data);
-        setTotalPages(response.data.totalPages);
+        setListings(response.data.add.data);
+        setTotalPages(response.data.add.totalPages);
       } catch (error) {
         setIsError(true);
         setListings([]);

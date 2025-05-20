@@ -8,6 +8,7 @@ import SkeletonTableLoader from "../skeletons/SkeletonTableLoader";
 import Image from "next/image";
 import Search from "../ui/Search";
 import Transaction from "@/src/lib/types/Transactions";
+import Error from "../ui/Error";
 
 const headings = [
   "Transaction ID",
@@ -50,8 +51,8 @@ export default function TransactionFrequencyPage() {
 
     const query = searchQuery.toLowerCase();
     const filtered = transactions.filter((transaction: Transaction) => {
-      const userId = transaction.userId?.toLowerCase() || "";
-      return userId.includes(query);
+    const userId = transaction.userId?.toLowerCase() || "";
+    return userId.includes(query);
     });
 
     setFilteredTransactions(filtered);
@@ -95,15 +96,9 @@ export default function TransactionFrequencyPage() {
       {isLoading ? (
         <SkeletonTableLoader headings={headings} rowCount={10} />
       ) : isError ? (
-        <div className="flex items-center justify-center h-[400px]">
-          <p className="text-red-500">Error loading transactions</p>
-        </div>
+        <Error text="Something went wrong" />
       ) : filteredTransactions.length === 0 ? (
-        <div className="flex items-center justify-center h-[200px]">
-          <p className="text-gray-500">
-            No transactions found matching your search
-          </p>
-        </div>
+        <Error text="No data found" />
       ) : (
         <TransactionFrequencyTable
           headings={headings}

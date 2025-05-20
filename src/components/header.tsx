@@ -3,15 +3,16 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useDarkMode } from "../app/context/DarkModeContext"; // Import context hook
+import { useRouter } from "next/navigation"; // Import router
 import { Bell, Menu } from "lucide-react";
-import { Admin } from "../lib/types/User";
+import { Admin } from "@/src/lib/types/User"; // Import Admin type
 
 export default function Navbar() {
-  const { darkMode } = useDarkMode(); // Get dark mode state from context
+  const router = useRouter(); // Initialize router
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [user, setUser] = useState({} as Admin);
-  const [image,setImage] = useState("");
+  const [image, setImage] = useState("");
+  
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
@@ -20,12 +21,21 @@ export default function Navbar() {
     }
   }, []);
 
+  // Centralized logout function
+  const handleLogout = (e: React.MouseEvent) => {
+    e.preventDefault(); // Prevent default navigation
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
+    setIsMenuOpen(false);
+    router.push("/signin"); // Programmatically navigate
+  };
+
   return (
     <nav className="w-full bg-white border-b border-gray-100 px-4 py-3 flex items-center justify-between">
       {/* Logo */}
       <Link href="/" className="flex items-center">
         <Image
-          src={darkMode ? "/images/darkModeLogo.svg" : "/images/logo.svg"}
+          src={"/images/logo.svg"}
           alt="logo"
           height={34}
           width={152}
@@ -124,18 +134,18 @@ export default function Navbar() {
             <div className="absolute top-10 right-0 w-44 bg-white rounded-md shadow-lg py-3 px-4 z-10 border border-gray-100 font-[satoshi]">
               <div className="space-y-3">
                 <Link
-                  onClick={() => setIsMenuOpen(!isMenuOpen)}
+                  onClick={() => setIsMenuOpen(false)}
                   href="/settings"
-                  className="block text-sm text-secondary font-bold curpsor-pointer"
+                  className="block text-sm text-secondary font-bold cursor-pointer"
                 >
                   Forgot Password
                 </Link>
-                <Link
-                  href="/signin"
-                  className="block text-sm text-[#DF1D1D] font-bold curpsor-pointer"
+                <button
+                  onClick={handleLogout}
+                  className="block text-sm text-[#DF1D1D] font-bold cursor-pointer w-full text-left"
                 >
                   Logout
-                </Link>
+                </button>
               </div>
             </div>
           )}
@@ -147,18 +157,18 @@ export default function Navbar() {
         <div className="absolute top-14 right-4 w-40 bg-white rounded-md shadow-lg py-3 px-4 z-10 border border-gray-100 md:hidden">
           <div className="space-y-3 font-[satoshi]">
             <Link
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              onClick={() => setIsMenuOpen(false)}
               href="/settings"
               className="block text-sm text-secondary font-bold cursor-pointer"
             >
               Forgot Password
             </Link>
-            <Link
-              href="/logout"
-              className="block text-sm text-[#DF1D1D] font-bold cursor-pointer"
+            <button
+              onClick={handleLogout}
+              className="block text-sm text-[#DF1D1D] font-bold cursor-pointer w-full text-left"
             >
               Logout
-            </Link>
+            </button>
           </div>
         </div>
       )}

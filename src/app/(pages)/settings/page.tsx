@@ -103,6 +103,7 @@ export default function SettingsPage() {
               "user",
               JSON.stringify({ ...user, image: uploadResponse.data.image })
             );
+            alert("Image uploaded successfully");
 
             if (user && user.name && user.email) {
               setUser({

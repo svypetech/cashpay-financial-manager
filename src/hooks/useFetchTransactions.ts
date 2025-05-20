@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import Transaction from "../lib/types/Transactions";
 
 export default function useTransaction({
   currentPage,
@@ -57,6 +58,12 @@ export default function useTransaction({
         }
         
         // Update state with the response data
+        response.data.transactions.forEach((transaction: Transaction) => {
+          if(transaction.web3Data === null){
+            setIsError(true)
+            return
+          } 
+        })
         setTransactions(response.data.transactions);
         setTotalPages(response.data.totalPages);
       } catch (error) {

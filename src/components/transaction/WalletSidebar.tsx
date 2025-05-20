@@ -8,7 +8,7 @@ import { cal_USDT_Value } from "@/src/utils/functions";
 interface WalletSidebarProps {
   showSidebar: boolean;
   onClose: () => void;
-  wallet: Wallet;
+  wallet: Wallet["data"];
 }
 
 export default function WalletSidebar({

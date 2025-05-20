@@ -1,8 +1,8 @@
+"use client"
 import ClientLayout from "@/src/components/layout/explorerLayout";
 import { ReactNode } from "react";
-
-const Layout = async ({ children }: { children: ReactNode }) => {
-  
+const Layout =  ({ children }: { children: ReactNode }) => {
+    
     return (
       <ClientLayout>{children}</ClientLayout>
     );

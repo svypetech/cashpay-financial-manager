@@ -5,12 +5,12 @@ export default function Wallet({
   currentPage,
   limit,
   sortBy,
-  searchQuery
+  searchQuery,
 }: {
-  currentPage: number,
-  limit: number,
-  sortBy: string,
-  searchQuery: string
+  currentPage: number;
+  limit: number;
+  sortBy: string;
+  searchQuery: string;
 }) {
   const [wallets, setWallets] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -32,23 +32,27 @@ export default function Wallet({
     const fetchWallets = async () => {
       try {
         setLoading(true);
-        const url = debouncedSearchQuery !== ""
-          ? `${process.env.NEXT_PUBLIC_BACKEND_URL}transaction/wallets/all?limit=${limit}&page=${currentPage}&search=${debouncedSearchQuery}&sortBy=${sortBy}`
-          : `${process.env.NEXT_PUBLIC_BACKEND_URL}transaction/wallets/all?limit=${limit}&page=${currentPage}&sortBy=${sortBy}`;
-          
+        let url = `${process.env.NEXT_PUBLIC_BACKEND_URL}transaction/wallets/all?limit=${limit}&page=${currentPage}`;
+
+        if (sortBy !== "") {
+          url += `&sortBy=${sortBy}`;
+        }
+        if (debouncedSearchQuery !== "") {
+          url += `&search=${debouncedSearchQuery}`;
+        }
+
         const response = await axios.get(url, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         });
-        
+
         if (response.status !== 200) {
           throw new Error("Failed to fetch wallets");
         }
-        
-        const data = response.data;
-        setWallets(data);
-        setTotalPages(5);
+
+        setWallets(response.data.walletsWithUser);
+        setTotalPages(response.data.totalPages);
       } catch (error) {
         setIsError(true);
       } finally {
@@ -57,7 +61,7 @@ export default function Wallet({
     };
 
     fetchWallets();
-  }, [currentPage, limit, sortBy, debouncedSearchQuery]);
+  }, [currentPage, limit, sortBy, debouncedSearchQuery, sortBy]);
 
-  return { wallets, loading, isError, totalPages }; 
+  return { wallets, loading, isError, totalPages };
 }

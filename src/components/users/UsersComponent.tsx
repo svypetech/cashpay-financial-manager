@@ -8,7 +8,7 @@ import Search from "../ui/Search";
 import Sort from "../ui/Sort";
 import useFetchUsers from "@/src/hooks/useFetchUsers";
 import SkeletonTableLoader from "../skeletons/SkeletonTableLoader";
-
+import Error from "../ui/Error";
 const headings = [
   "User ID",
   "Name",
@@ -119,9 +119,9 @@ export default function UsersComponent() {
       {isLoading ? (
         <SkeletonTableLoader headings={headings} rowCount={10} minWidth="1200" />
       ) : isError ? (
-        <div className="text-red-500 py-10 text-center">
-          Error loading users
-        </div>
+        <Error text="Something went wrong" />
+      ) : filteredUsers.length === 0 ? (
+        <Error text="No data found" />
       ) : (
         <div className="mt-4">
           <UserTable

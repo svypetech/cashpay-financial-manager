@@ -6,7 +6,9 @@ import Image from "next/image";
 import TransactionTable from "../tables/TransactionsTable";
 import useTransaction from "@/src/hooks/useFetchTransactions";
 import TransactionType from "@/src/lib/types/Transactions";
+import Error from "../ui/Error";
 import SkeletonTableLoader from "../skeletons/SkeletonTableLoader";
+import Sort from "../ui/Sort";
 const headings = ["ID", "From", "To", "Status", "Block#", "Date"];
 const navigationTabs = [
   { id: "all", title: "All" },
@@ -17,38 +19,26 @@ const navigationTabs = [
 
 export default function Transactions() {
   const [currentPage, setCurrentPage] = useState(1);
-
   const [activeTab, setActiveTab] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredData, setFilteredData] = useState<TransactionType[]>([]);
-  
+
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
-  
 
-  const { transactions, isLoading, isError, totalPages } = useTransaction(
-    {currentPage,
+  const { transactions, isLoading, isError, totalPages } = useTransaction({
+    currentPage,
     limit: 10,
     searchQuery,
-    status: activeTab === "all" ? "" : activeTab
+    status: activeTab === "all" ? "" : activeTab,
   });
 
-  useEffect(() => {
-    if (isLoading) return;
-    if (isError) {
-      setFilteredData([]);
-      return;
-    }
-    setFilteredData(transactions);
-  }, [isLoading, isError, transactions]);
-
-  
   
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchQuery]);
+  }, [searchQuery, activeTab]);
 
   return (
     <div>
@@ -110,14 +100,24 @@ export default function Transactions() {
       </div>
       {isLoading ? (
         <SkeletonTableLoader rowCount={10} headings={headings} />
+      ) : isError ? (
+        <>
+          <Error text="Something went wrong" />
+        </>
       ) : (
         <>
-          <TransactionTable headings={headings} data={filteredData} />
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={handlePageChange}
-          />
+          {filteredData.length === 0 ? (
+            <Error text="No data found" />
+          ) : (
+            <div className="mt-4">
+              <TransactionTable headings={headings} data={filteredData} />
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+              />
+            </div>
+          )}
         </>
       )}
     </div>

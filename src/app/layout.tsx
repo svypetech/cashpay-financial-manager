@@ -1,23 +1,22 @@
-import type { Metadata } from "next";
-import { Montserrat } from "next/font/google";
+"use client";
+import { useEffect } from "react";
 import "./globals.css";
-import ClientLayout from "../components/layout/explorerLayout"; // New client component
+import { useRouter } from "next/navigation";
 
-const montserrat = Montserrat({
-  subsets: ["latin"],
-  weight: ["400", "600"],
-  variable: "--font-montserrat",
-});
 
-export const metadata: Metadata = {
-  title: "CashPay - Your Finance Partner",
-  description: "Your Finance Partner is Coming Soon.",
-};
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  const router = useRouter();
+  useEffect(() => {
+      let user = localStorage.getItem("user");
+      let token = localStorage.getItem("token");
+      if (!user || !token) {
+        router.push("/signin");
+      }
+    }, []);
   return (
     <html lang="en">
-      <body className={`${montserrat.variable} antialiased`}>
+      <body >
         {children}
       </body>
     </html>

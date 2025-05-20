@@ -146,25 +146,25 @@ const WalletTable: React.FC<Props> = ({ data, headings }) => {
                   className="border-b border-gray-200 text-[12px] md:text-[16px]"
                 >
                   <td className="p-2 md:p-4 font-satoshi min-w-[100px] break-words">
-                    {wallet.userId}
+                    {wallet.data.userId}
                   </td>
                   <td className="p-2 md:p-4 font-satoshi font-bold text-primary min-w-[120px] break-words">
-                    {wallet.userName
-                      ? wallet.userName.firstName +
+                    {wallet.data.userName
+                      ? wallet.data.userName.firstName +
                         " " +
-                        wallet.userName.lastName
+                        wallet.data.userName.lastName
                       : "N/A"}
                   </td>
                   <td className="p-2 md:p-4 font-satoshi min-w-[150px] break-words">
-                    {wallet.cardUser ? "True" : "False"}
+                    {wallet.data.cardUser ? "True" : "False"}
                   </td>
                   <td className="p-2 md:p-4 font-satoshi min-w-[120px]">
                     <span className="relative left-[30px]">
-                      {wallet.cryptoHoldings}
+                      {wallet.data.cryptoHoldings}
                     </span>
                   </td>
                   <td className="p-2 md:p-4 font-satoshi min-w-[100px]">
-                    {formatNumberToTwoDecimals(wallet.totalBalanceUSD)}
+                    {formatNumberToTwoDecimals(wallet.data.totalBalanceUSD)}
                   </td>
                   <td className="relative p-2 md:p-4 font-satoshi min-w-[60px] ">
 
@@ -202,7 +202,7 @@ const WalletTable: React.FC<Props> = ({ data, headings }) => {
                           <button
                             className="block w-full text-left px-4 py-2 text-sm text-red-500 font-bold cursor-pointer hover:bg-gray-50"
                             onClick={() => {
-                              banUser(wallet.userId);
+                              banUser(wallet.data.userId);
                             }}
                           >
                             Ban User
@@ -210,7 +210,7 @@ const WalletTable: React.FC<Props> = ({ data, headings }) => {
                           <button
                             className="block w-full text-left px-4 py-2 text-sm text-red-500 font-bold cursor-pointer hover:bg-gray-50"
                             onClick={() => {
-                              suspendUser(wallet.userId);
+                              suspendUser(wallet.data.userId);
                             }}
                           >
                             Suspend User
@@ -225,12 +225,12 @@ const WalletTable: React.FC<Props> = ({ data, headings }) => {
         </table>
       </div>
 
-      {/* Wallet Details Sidebar */}
-      {selectedWallet && selectedWallet.balances.items && (
+      {/* Wallet.data Details Sidebar */}
+      {selectedWallet && selectedWallet.data.balances.items && (
         <WalletSidebar
           showSidebar={showSidebar}
           onClose={() => setShowSidebar(false)}
-          wallet={selectedWallet}
+          wallet={selectedWallet.data}
         />
       )}
     </div>

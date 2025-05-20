@@ -8,6 +8,7 @@ import SkeletonTableLoader from "../skeletons/SkeletonTableLoader";
 import Search from "../ui/Search";
 import Image from "next/image";
 import { User } from "@/src/lib/types/User";
+import Error from "../ui/Error";
 
 const headings = [
   "User ID",
@@ -93,13 +94,9 @@ export default function UserEngagement() {
           minWidth="1000"
         />
       ) : isError ? (
-        <div className="p-4 text-red-500 flex items-center justify-center h-[400px]">
-          Error loading users
-        </div>
+        <Error text="Error fetching users" />
       ) : filteredUsers.length === 0 ? (
-        <div className="p-4 text-gray-500 flex items-center justify-center h-[200px]">
-          No users found matching your search
-        </div>
+        <Error text="No data found" />
       ) : (
         <UserEngagementTable headings={headings} data={filteredUsers} />
       )}

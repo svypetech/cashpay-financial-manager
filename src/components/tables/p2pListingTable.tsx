@@ -5,6 +5,8 @@ import { useState, useRef, useEffect } from "react";
 import ListingDetailsPopup from "../p2pListing/p2pDetailsPopUp";
 import Image from "next/image";
 import { Listing } from "@/src/lib/types/Listing";
+import { shortenAddress } from "@/src/utils/functions";
+import ColourfulBlock from "../ui/ColourfulBlock";
 
 interface Props {
   headings: string[];
@@ -129,10 +131,10 @@ const ListingsTable: React.FC<Props> = ({ data, headings }) => {
                   className="border-b border-gray-200 text-[12px] md:text-[16px] font-[satoshi]"
                 >
                   <td className="px-2 md:px-4 py-3 md:py-4 whitespace-nowrap font-bold text-primary min-w-[100px] break-words">
-                    {listing.id}
+                    {shortenAddress(listing.id)}
                   </td>
                   <td className="px-2 md:px-4 py-3 md:py-4 whitespace-nowrap min-w-[120px] break-words">
-                    {listing.createdBy}
+                    {shortenAddress(listing.createdBy)}
                   </td>
 
                   <td className="px-2 md:px-4 py-3 md:py-4 whitespace-nowrap min-w-[150px] break-words">
@@ -143,14 +145,10 @@ const ListingsTable: React.FC<Props> = ({ data, headings }) => {
                   </td>
                   <td className="px-2 md:px-4 py-3 md:py-4 whitespace-nowrap min-w-[120px]">
                     {listing.addVisibility === true && (
-                      <span className="text-left bg-[#71FB5533] text-[#20C000] px-2 py-2 rounded-xl text-xs md:text-base font-semibold whitespace-nowrap flex justify-center items-center w-[100px]">
-                        Active
-                      </span>
+                      <ColourfulBlock text="Active" className="bg-[#71FB5533] text-[#20C000]" />
                     )}
                     {listing.addVisibility === false && (
-                      <span className="text-[#FF0000] bg-[#FF000033] px-2 py-2 rounded-xl text-xs md:text-base font-semibold whitespace-nowrap flex justify-center items-center w-[100px]">
-                        Inactive
-                      </span>
+                      <ColourfulBlock text="Inactive" className="bg-[#FF000033] text-[#FF0000]" />
                     )}
                   </td>
                   <td className="relative p-2 md:p-4 font-satoshi min-w-[60px] text-center">

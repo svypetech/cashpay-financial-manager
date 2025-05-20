@@ -7,6 +7,7 @@ import ListingTable from "@/src/components/tables/p2pListingTable";
 import useFetchP2PListing from "@/src/hooks/useFetchP2PListing";
 import SkeletonTableLoader from "../skeletons/SkeletonTableLoader";
 import Sort from "../ui/Sort";
+import Error from "../ui/Error";
 
 const headings = [
   "Listing ID",
@@ -20,7 +21,7 @@ const headings = [
 const navigationTabs = [
   { id: "all", title: "All" },
   { id: "active", title: "Active" },
-  { id: "inactive", title: "InActive" },
+  { id: "inactive", title: "Inactive" },
 ];
 const sortOptions = [
   { label: "None", value: "" },
@@ -34,7 +35,7 @@ export default function P2PListings() {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("");
 
-  const { listings, totalPages, isLoading } = useFetchP2PListing({
+  const { listings, totalPages, isLoading,isError } = useFetchP2PListing({
     currentPage,
     limit: 10,
     searchQuery,
@@ -108,7 +109,13 @@ export default function P2PListings() {
       </div>
       {isLoading ? (
         <SkeletonTableLoader rowCount={10} headings={headings} />
-      ) : (
+      ) : 
+      isError ? (
+        <Error text="Something went wrong" />
+      ) : listings.length === 0 ? (
+        <Error text="No data found" />
+      ) :
+      (
         <ListingTable headings={headings} data={listings} />
       )}
       <Pagination
