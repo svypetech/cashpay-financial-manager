@@ -9,7 +9,7 @@ import { shortenAddress, timeAgo } from "@/src/utils/functions"
 interface TransactionDetailsPopupProps {
   showPopup: boolean
   onClose: () => void
-  transaction: Transaction
+  transaction: Transaction 
 }
 
 export default function TransactionManagementPopup({

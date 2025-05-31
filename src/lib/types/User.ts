@@ -23,7 +23,7 @@ export interface User {
   loginFrequency: number;
   sessionDuration: number;
   totalTime: number;
-  lastActivity: string
+  lastActivity: string;
 }
 export interface Admin {
   canAccessApiLogs: boolean;
@@ -49,3 +49,17 @@ export interface Admin {
   image?: string;
   imagePath?: string;
 }
+
+export type DashboardUser = {
+  name: {
+    firstName: string;
+    lastName: string;
+  };
+  contact: {
+    code: string;
+    number: string;
+  };
+  status: string;
+  email: string;
+  transactionCount: number;
+};

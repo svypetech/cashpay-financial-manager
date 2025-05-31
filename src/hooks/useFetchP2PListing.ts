@@ -63,5 +63,5 @@ export default function useFetchP2PListing({
     fetchListings();
   }, [currentPage, debouncedSearchQuery, addVisibility, sortBy]);
 
-  return { listings, totalPages, isLoading, isError };
+  return { listings, totalPages, isLoading, isError,setListings };
 }

@@ -1,6 +1,4 @@
 import { formatDistanceToNow } from "date-fns";
-import { useRouter } from "next/navigation";
-
 
 export function shortenAddress(address: string, chars = 6): string {
   if (!address) return "-";
@@ -12,7 +10,10 @@ export function shortenAddress(address: string, chars = 6): string {
 }
 
 export function timeAgo(dateString: string) {
-  return formatDistanceToNow(new Date(dateString), { addSuffix: true });
+  const formatted = formatDistanceToNow(new Date(dateString), {
+    addSuffix: true,
+  });
+  return formatted.replace(/^about\s/, ""); // Remove 'about ' if it appears at the start
 }
 
 export const formatDate = (dateString: string): string => {
@@ -76,7 +77,6 @@ export function cal_USDT_Value({
 }
 
 export const AuthenticateUser = () => {
-  
   let user = null;
   let token = localStorage.getItem("token");
   try {
@@ -94,8 +94,7 @@ export const AuthenticateUser = () => {
     Object.keys(user).length === 0
   ) {
     return false;
-  }
-  else{
+  } else {
     return true;
   }
 };

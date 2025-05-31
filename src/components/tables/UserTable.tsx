@@ -6,6 +6,7 @@ import UserProfileSidebar from "../users/UserInfoSidebar";
 import Image from "next/image";
 import ColourfulBlock from "../ui/ColourfulBlock";
 import { User } from "@/src/lib/types/User";
+import ExpandableId from "../ui/ExpandableId";
 
 interface Props {
   headings: string[];
@@ -33,10 +34,11 @@ function formatDate(dateString: string): string {
   }
 }
 
-const UserTable: React.FC<Props> = ({ data, headings }) => {
+
+const UserTable: React.FC<Props> = ({ data, headings, setData }) => {
   const [activeDropdown, setActiveDropdown] = useState<number | null>(null);
   const [showUserSidebar, setShowUserSidebar] = useState(false);
-  const [selectedUser, setSelectedUser] = useState<User>({} as User);
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const tableRef = useRef<HTMLDivElement>(null);
   const dropdownRefs = useRef<(HTMLDivElement | null)[]>([]);
 
@@ -105,10 +107,10 @@ const UserTable: React.FC<Props> = ({ data, headings }) => {
     <div className="flex-1 rounded-lg w-full py-5">
       {/* Table */}
       <div className="rounded-lg overflow-x-auto w-full" ref={tableRef}>
-        <table className="w-full text-left min-w-[1200px]">
+        <table className="w-full text-left min-w-[1000px]">
           <thead className="bg-secondary/10">
             <tr className="font-satoshi text-[12px] sm:text-[16px] whitespace-nowrap">
-              <th className="p-4 sm:p-4 text-left font-[700] w-[12%]">
+              <th className="p-4 sm:p-4 text-left font-[700] w-[10%]">
                 {headings[0]}
               </th>
               <th className="p-4 sm:p-4 text-left font-[700] w-[15%]">
@@ -117,7 +119,7 @@ const UserTable: React.FC<Props> = ({ data, headings }) => {
               <th className="p-4 sm:p-4 text-left font-[700] w-[18%]">
                 {headings[2]}
               </th>
-              <th className="p-4 sm:p-4 text-left font-[700] w-[20%]">
+              <th className="p-4 sm:p-4 text-left font-[700] w-[22%]">
                 {headings[3]}
               </th>
               <th className="p-4 sm:p-4 text-left font-[700] w-[25%]">
@@ -135,23 +137,28 @@ const UserTable: React.FC<Props> = ({ data, headings }) => {
                   key={index}
                   className="border-b border-gray-200 text-[12px] sm:text-[16px]"
                 >
-                  <td className="p-4 sm:p-4 font-satoshi whitespace-nowrap">
-                    {user._id}
+                  <td className="px-2 sm:px-4 py-3  sm:py-4 font-satoshi whitespace-nowrap">
+                    <ExpandableId id={user._id} />
                   </td>
-                  <td className="p-4 sm:p-4 font-satoshi font-bold text-primary whitespace-nowrap">
+                  <td className="px-2 sm:px-4 py-3 sm:py-4 font-satoshi font-bold text-primary whitespace-nowrap">
                     {user.name
                       ? user.name?.firstName + " " + user.name?.lastName
                       : "N/A"}
                   </td>
-                  <td className="p-4 sm:p-4 font-satoshi whitespace-nowrap overflow-hidden text-ellipsis">
+
+                  <td className="px-2 sm:px-4 py-3 sm:py-4 font-satoshi whitespace-nowrap overflow-hidden text-ellipsis">
                     {user.email ? user.email : "N/A"}
                   </td>
-                  <td className="p-4 sm:p-4 font-satoshi whitespace-nowrap">
+                  <td className="px-2 sm:px-4 py-3 sm:py-4 font-satoshi whitespace-nowrap">
                     {formatDate(user.date)}
                   </td>
-                  <td className="p-4 sm:p-4 font-satoshi">
+                  <td className="px-2 sm:px-4 py-3 sm:py-4 font-satoshi">
                     <ColourfulBlock
-                      text={user.verificationStatus === "new" ? "Pending" : user.verificationStatus}
+                      text={
+                        user.verificationStatus === "new"
+                          ? "Pending"
+                          : user.verificationStatus
+                      }
                       className={`text-center rounded-xl md:text-md font-semibold ${
                         user.verificationStatus === "Approved"
                           ? "bg-[#71FB5533] text-[#20C000]"
@@ -159,10 +166,10 @@ const UserTable: React.FC<Props> = ({ data, headings }) => {
                       }`}
                     />
                   </td>
-                  <td className="relative p-4 sm:p-4 font-satoshi text-center">
+                  <td className="relative px-2 sm:px-4 py-3 sm:py-4 font-satoshi text-center">
                     <div className="dropdown-container relative">
                       <button
-                        className="absolute right-0 md:relative md:right-auto cursor-pointer"
+                        className="absolute right-6 md:relative md:right-auto cursor-pointer "
                         onClick={() => toggleDropdown(index)}
                       >
                         <Image
@@ -170,7 +177,7 @@ const UserTable: React.FC<Props> = ({ data, headings }) => {
                           alt="Options"
                           width={24}
                           height={24}
-                          className="w-4 h-4"
+                          className="w-4 h-4 min-[1400px]:relative min-[1400px]:right-[25px]"
                         />
                       </button>
 
@@ -200,12 +207,16 @@ const UserTable: React.FC<Props> = ({ data, headings }) => {
           showSidebar={showUserSidebar}
           onClose={() => {
             setShowUserSidebar(false);
-            setSelectedUser({} as User);
+            setSelectedUser(null);
           }}
-          user={{
-            ...selectedUser,
-            date: formatDate(selectedUser.date),
-          }}
+          user={
+            selectedUser
+              ? {
+                  ...selectedUser,
+                  date: formatDate(selectedUser.date),
+                }
+              : null
+          }
         />
       </div>
     </div>

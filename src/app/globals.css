@@ -18,8 +18,11 @@
   --color-green: #71FB5514;
   --color-skyblue: #27AAE1;
   --color-success: #20C000;
-  --color-darkText: #B3B3B3
+  --color-successBg: #71FB5533;
+  --color-darkText: #B3B3B3;
   --color-borderDark: #848484;
+  --color-fail: #DF1D1D;
+
 }
 
 

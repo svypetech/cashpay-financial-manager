@@ -7,8 +7,10 @@ export default function ColourfulBlock({
 }) {
   return (
     <span
-      className={`font-[700] rounded-[12px] sm:px-[16px] sm:py-[10px] px-[10px] py-[8px] inline-flex justify-center items-center w-[80px] sm:w-[100px]  sm:h-[45px] box-border overflow-hidden whitespace-nowrap text-ellipsis ${className}`}
+      className={`font-[700] rounded-[12px] px-[16px] py-[10px] sm:px-[24px] sm:py-[12px] sm:min-w-[120px] max-w-fit min-w-[80px] h-[35px] sm:h-[45px] flex justify-center items-center border-box ${className}`}
     >
+      {" "}
+      {/* Fixed the className placement */}
       {text}
     </span>
   );

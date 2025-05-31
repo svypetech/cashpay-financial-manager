@@ -113,7 +113,7 @@ export default function WalletSidebar({
           {/* Crypto Holdings */}
           <div className="flex flex-col items-center mx-10 py-8 font-[satoshi] border-b border-gray-300">
             <div className="flex flex-col w-full">
-              {wallet &&
+              {wallet.balances.items && wallet.balances.items.length > 0 ?
                 wallet.balances.items.map((item, index) => (
                   <CryptoCard
                     key={index}
@@ -126,7 +126,9 @@ export default function WalletSidebar({
                     })}
                     iconUrl={item.logo_url || "/placeholder.svg"}
                   />
-                ))}
+                ))
+                : <p className="text-center text-gray-500">No crypto holdings available.</p>
+              }
             </div>
           </div>
         </div>

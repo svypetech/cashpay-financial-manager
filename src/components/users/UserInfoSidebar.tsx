@@ -8,7 +8,7 @@ import { User } from "@/src/lib/types/User";
 interface UserProfileSidebarProps {
   showSidebar: boolean;
   onClose: () => void;
-  user: User;
+  user: User | null; 
 }
 
 export default function UserProfileSidebar({
@@ -81,9 +81,9 @@ export default function UserProfileSidebar({
             {/* Profile Image */}
             <div className="mb-4 h-32 w-32 overflow-hidden rounded-full flex items-center justify-center">
               <img
-                src={user.selfieUrl || "/placeholder.svg?height=200&width=200"}
+                src={user && user.selfieUrl || "/placeholder.svg?height=200&width=200"}
                 alt={
-                  user.name && user.name.firstName + " " + user.name.lastName
+                  user && user.name && user.name.firstName + " " + user.name.lastName || "User Avatar"
                 }
                 className="h-full w-full object-cover"
               />
@@ -92,9 +92,9 @@ export default function UserProfileSidebar({
             {/* User Info */}
             <div className="text-center w-full mb-6">
               <h3 className="mb-1 text-xl font-semibold">
-                {user.name && user.name.firstName + " " + user.name.lastName}
+                {user && user.name && user.name.firstName + " " + user.name.lastName}
               </h3>
-              <p className="text-sm text-gray-500">User ID: {user._id}</p>
+              <p className="text-sm text-gray-500">User ID: {user && user._id}</p>
             </div>
 
             {/* User Details - Exactly matching reference */}
@@ -111,7 +111,7 @@ export default function UserProfileSidebar({
                     />
                     <span className="font-bold">Email</span>
                   </div>
-                  <span className="">{user.email}</span>
+                  <span className="">{user && user.email}</span>
                 </div>
               </div>
               <div className="mb-2 flex w-full items-center">
@@ -126,7 +126,7 @@ export default function UserProfileSidebar({
                     />
                     <span className="font-bold">Joining</span>
                   </div>
-                  <span className="text-sm">{user.date}</span>
+                  <span className="text-sm">{user && user.date}</span>
                 </div>
               </div>
             </div>
@@ -138,13 +138,14 @@ export default function UserProfileSidebar({
                 <h4 className="text-2xl font-semibold text-center">
                   KYC Verification
                 </h4>
-                {user.verificationStatus &&
+                {user && user.verificationStatus && (
                   user.verificationStatus.toLowerCase() === "approved" && (
                     <span className="rounded-xl font-bold px-4 py-2 text bg-[#71FB5533] text-[#20C000]">
                       Verified
                     </span>
-                  )}
-                {user.verificationStatus === "Pending" && (
+                  )
+                )}
+                {user && user.verificationStatus === "Pending" && (
                   <span className="rounded-xl font-bold px-4 py-2 text-[#727272] bg-[#72727233]">
                     Pending
                   </span>
@@ -152,7 +153,7 @@ export default function UserProfileSidebar({
               </div>
 
               {/* Verification Badge */}
-              {user.verificationStatus === "Approved" && (
+              {user && user.verificationStatus === "Approved" && (
                 <div className="mb-12 flex justify-center">
                   <div className="relative">
                     <Image

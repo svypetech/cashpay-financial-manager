@@ -20,7 +20,7 @@ const headings = [
 
 // Sort options
 const sortOptions = [
-  {label: "None", value: ""},
+  { label: "None", value: "" },
   { label: "Date", value: "date" },
   { label: "Status", value: "userStatus" },
 ];
@@ -29,7 +29,7 @@ export default function UsersComponent() {
   // All states in one place
   const [activeTab, setActiveTab] = useState("All");
   const [currentPage, setCurrentPage] = useState(1);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("");
   const [filterStatus, setFilterStatus] = useState("");
 
@@ -50,33 +50,29 @@ export default function UsersComponent() {
   };
 
   // Handle search
-  const handleSearch = (value: string) => {
-    setSearchTerm(value);
-  };
 
   // Handle sort
   const handleSort = (value: string) => {
     setSortBy(value);
   };
 
-  // Filter and sort users based on activeTab, searchTerm, and sortBy
+  // Filter and sort users based on activeTab, searchQuery, and sortBy
   const filteredUsers = useMemo(() => {
     if (!allUsers) return [];
 
     // First filter by tab
     let filtered = allUsers;
-    if(activeTab === "All") {
+    if (activeTab === "All") {
       setFilterStatus("");
-    }
-    else if (activeTab === "Verified") {
+    } else if (activeTab === "Verified") {
       setFilterStatus("Approved");
     } else if (activeTab === "Pending Verifications") {
       setFilterStatus("Pending");
     }
 
-    // Then apply search filter if searchTerm exists
-    if (searchTerm.trim()) {
-      const search = searchTerm.toLowerCase();
+    // Then apply search filter if searchQuery exists
+    if (searchQuery.trim()) {
+      const search = searchQuery.toLowerCase();
       filtered = filtered.filter((user) => {
         if (!user.name) return false;
         let name = user.name.firstName + " " + user.name.lastName;
@@ -89,11 +85,11 @@ export default function UsersComponent() {
     }
 
     return filtered;
-  }, [allUsers, activeTab, searchTerm]);
+  }, [allUsers, activeTab, searchQuery]);
 
-  useEffect(()=>{
-    setCurrentPage(1)
-  },[filterStatus])
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [filterStatus]);
 
   return (
     <>
@@ -106,22 +102,23 @@ export default function UsersComponent() {
       />
 
       {/* Search and Actions */}
-      <div className="flex flex-col md:grid md:grid-cols-4 justify-between items-center mb-2 gap-4 mt-4">
-        {/* Search component */}
-        <Search className="w-full md:col-span-3" onSearch={handleSearch} />
-
-        {/* Enhanced Sort component with options */}
+      <div className="flex flex-col gap-4 sm:gap-[28px] sm:flex-row mt-[30px]">
+        <Search className="sm:w-[80%] w-full" onSearch={setSearchQuery} />
         <Sort
-          className="w-full"
-          title="Sort by"
+          className="sm:w-[20%] w-full"
+          title="Sort"
           options={sortOptions}
-          onSort={handleSort}
+          onSort={setSortBy}
         />
       </div>
 
       {/* Content area */}
       {isLoading ? (
-        <SkeletonTableLoader headings={headings} rowCount={10} minWidth="1200" />
+        <SkeletonTableLoader
+          headings={headings}
+          rowCount={10}
+          minWidth="1200"
+        />
       ) : isError ? (
         <Error text="Something went wrong" />
       ) : filteredUsers.length === 0 ? (

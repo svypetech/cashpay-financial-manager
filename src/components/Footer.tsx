@@ -24,7 +24,7 @@ export default function Footer() {
   return (
     <>
       {/* Spacer to prevent content from hiding behind footer */}
-      <div className="h-24 w-full"></div>
+      <div className="h-28 w-full"></div>
       
       <footer className="fixed bottom-0 flex justify-center items-center w-full p-2 pb-8 z-10 pointer-events-none">
         <div className="flex justify-center items-center bg-white rounded-2xl border-[1px] border-[#0000001A] max-w-[600px] py-5 px-16 shadow-lg pointer-events-auto">

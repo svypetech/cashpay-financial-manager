@@ -4,8 +4,8 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import ConfirmDialog from "@/src/components/cards/ConfirmModal";
-import axios, { AxiosError } from "axios";
+import ConfirmDialog from "@/src/components/ui/ConfirmModal";
+import axios from "axios";
 import { useRouter } from "next/navigation";
 
 // Define the form schema with Zod
@@ -70,7 +70,7 @@ export default function ChangePasswordPage() {
       if (response.data.success) {
         alert("Password changed successfully!");
         router.push("/settings");
-      } 
+      }
 
       // window.location.href = "/settings"
     } catch (error: any) {
@@ -175,9 +175,7 @@ export default function ChangePasswordPage() {
         onClose={() => setShowConfirmation(false)}
         onConfirm={handleConfirmChange}
         isLoading={isSubmitting}
-        confirmButtonClass="flex-1 py-2 rounded-lg bg-primary text-white font-semibold hover:bg-blue-900 flex items-center justify-center cursor-pointer"
-        //primary color button
-        cancelButtonClass="flex-1 py-2 rounded-lg border-[1px] border-primary text-primary font-semibold cursor-pointer flex items-center justify-center"
+        style="blue"
       />
     </div>
   );

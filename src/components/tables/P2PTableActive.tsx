@@ -3,28 +3,39 @@
 import Image from "next/image";
 import type React from "react";
 import { useEffect, useState, useRef } from "react";
-import WalletSidebar from "../transaction/WalletSidebar";
-import { Wallet } from "@/src/lib/types/Wallet";
+import TradeDetailsPopup from "../p2pTrading/TradeDetailsPopup";
+import { shortenAddress } from "@/src/utils/functions";
+import { Trade } from "@/src/lib/types/Trades";
+import ColourfulBlock from "../ui/ColourfulBlock";
 import axios from "axios";
-import { formatNumberToTwoDecimals } from "@/src/utils/functions";
+import ConfirmModal from "../ui/ConfirmModal";
+import ExpandableId from "../ui/ExpandableId";
 interface Props {
   headings: string[];
-  data: Wallet[];
+  data: Trade[];
+  setData: React.Dispatch<React.SetStateAction<Trade[]>>;
 }
 
-const WalletTable: React.FC<Props> = ({ data, headings }) => {
+const P2PTableActive: React.FC<Props> = ({ data, headings, setData }) => {
   const [activeDropdown, setActiveDropdown] = useState<number | null>(null);
-  const [showSidebar, setShowSidebar] = useState(false);
-  const [selectedWallet, setSelectedWallet] = useState<Wallet | null>(null);
+  const [showPopup, setShowPopup] = useState(false);
+  const [selectedTrade, setSelectedTrade] = useState<Trade | null>(null);
   const tableRef = useRef<HTMLDivElement>(null);
   const dropdownRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const [showResolvePopup, setShowResolvePopup] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const banUser = async (userId: string) => {
+  const handleSubmit = async () => {
+    setIsSubmitting(true);
+
+    // Simulate a network request
     try {
-      await axios.put(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}user/banUser/`,
+      let response = await axios.put(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}transaction/order/resolveDispute`,
         {
-          id: userId,
+          orderId: selectedTrade ? selectedTrade.tradeId : "",
+          favourOf: "Seller",
+          comment: "Resolved in favour of seller, from active tabs",
         },
         {
           headers: {
@@ -32,32 +43,27 @@ const WalletTable: React.FC<Props> = ({ data, headings }) => {
           },
         }
       );
-    } catch (error) {
-      alert("Error banning user");
+      alert("Dispute resolved successfully: " + JSON.stringify(response.data));
+      // update the local state to canceled
+      setData((prevTrades) =>
+        prevTrades.map((trade) =>
+          trade.tradeId === selectedTrade?.tradeId
+            ? { ...trade, status: "Canceled" }
+            : trade
+        )
+      );
+    } catch (error: any) {
+      alert("Could not resolve due to insufficient balance");
     } finally {
-      setActiveDropdown(null);
+      setShowResolvePopup(false);
+      setIsSubmitting(false);
     }
   };
 
-  const suspendUser = (userId: string) => {
-    try {
-      axios.put(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}user/suspendUser/`,
-        {
-          id: userId,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
-    } catch (error) {
-      alert("Error suspending user");
-    } finally {
-      setActiveDropdown(null);
-    }
+  const toggleDropdown = (index: number) => {
+    setActiveDropdown(activeDropdown === index ? null : index);
   };
+
   useEffect(() => {
     // Close dropdown when clicking outside
     const handleClickOutside = (event: MouseEvent) => {
@@ -117,22 +123,18 @@ const WalletTable: React.FC<Props> = ({ data, headings }) => {
     }
   }, [activeDropdown, data.length]);
 
-  const toggleDropdown = (index: number) => {
-    setActiveDropdown(activeDropdown === index ? null : index);
-  };
-
   return (
     <div className="flex-1 rounded-lg w-full py-5">
       {/* Table */}
       <div
-        className="rounded-lg overflow-x-auto w-full min-h-[200px]"
+        className="rounded-lg overflow-x-auto w-full min-h-[200px] pb-[100px]"
         ref={tableRef}
       >
-        <table className="w-full text-left table-auto min-w-[800px]">
+        <table className="w-full text-left  min-w-[900px] ">
           <thead className="bg-secondary/10">
-            <tr className="font-satoshi text-[12px] md:text-[16px] p-2 md:p-4">
+            <tr className="font-satoshi text-[12px] md:text-[16px] py-3 md:py-4 px-2 md:px-4">
               {headings.map((heading, index) => (
-                <th key={index} className="p-2 md:p-4 text-left">
+                <th key={index} className="px-2 md:px-4 py-3 md:py-4 text-left">
                   {heading}
                 </th>
               ))}
@@ -140,37 +142,46 @@ const WalletTable: React.FC<Props> = ({ data, headings }) => {
           </thead>
           <tbody>
             {Array.isArray(data) &&
-              data.map((wallet, index) => (
+              data.map((trade, index) => (
                 <tr
                   key={index}
                   className="border-b border-gray-200 text-[12px] md:text-[16px]"
                 >
-                  <td className="p-2 md:p-4 font-satoshi min-w-[100px] break-words">
-                    {wallet.data.userId}
+                  <td className="px-2 md:px-4 py-3 md:py-6 font-satoshi min-w-[100px]">
+                    <ExpandableId id={trade.tradeId} />
                   </td>
-                  <td className="p-2 md:p-4 font-satoshi font-bold text-primary min-w-[120px] break-words">
-                    {wallet.data.userName
-                      ? wallet.data.userName.firstName +
-                        " " +
-                        wallet.data.userName.lastName
-                      : "N/A"}
+                  <td className="px-2 md:px-4 py-3 md:py-6 font-satoshi min-w-[120px] break-words">
+                    <ExpandableId id={trade.sellerId} />
                   </td>
-                  <td className="p-2 md:p-4 font-satoshi min-w-[150px] break-words">
-                    {wallet.data.cardUser ? "True" : "False"}
+                  <td className="px-2 md:px-4 py-3 md:py-6 font-satoshi min-w-[120px] break-words">
+                    <ExpandableId id={trade.buyerId} />
                   </td>
-                  <td className="p-2 md:p-4 font-satoshi min-w-[120px]">
-                    <span className="relative">
-                      {wallet.data.cryptoHoldings}
-                    </span>
+                  <td className="px-2 md:px-4 py-3 md:py-6 font-satoshi min-w-[100px]">
+                    {trade.amountt}
                   </td>
-                  <td className="p-2 md:p-4 font-satoshi min-w-[100px]">
-                    {formatNumberToTwoDecimals(wallet.data.totalBalanceUSD)}
+                  <td className="px-2 md:px-4 py-3 md:py-6 font-satoshi min-w-[100px]">
+                    {trade.currency}
                   </td>
-                  <td className="relative p-2 md:p-4 font-satoshi  ">
-
-                    <div className="dropdown-container  ">
+                  <td className="px-2 sm:px-4 py-3 sm:py-4 font-satoshi">
+                    <ColourfulBlock
+                      text={trade.payment}
+                      className={`text-center rounded-xl md:text-md font-semibold bg-[#71FB5533] text-[#20C000]`}
+                    />
+                  </td>
+                  <td className="px-2 sm:px-4 py-3 sm:py-4 font-satoshi">
+                    <ColourfulBlock
+                      text={trade.status}
+                      className={`text-center rounded-xl md:text-md font-semibold ${
+                        trade.status.toLowerCase() === "canceled"
+                          ? "bg-fail/20 text-fail"
+                          : "text-[#727272] bg-[#72727233]"
+                      }`}
+                    />
+                  </td>
+                  <td className="relative px-2 md:px-4 py-3 md:py-4 font-satoshi min-w-[60px] text-center">
+                    <div className="dropdown-container relative">
                       <button
-                        className="absolute relative md:right-auto cursor-pointer"
+                        className="absolute relative right-auto cursor-pointer"
                         onClick={() => toggleDropdown(index)}
                       >
                         <Image
@@ -178,7 +189,7 @@ const WalletTable: React.FC<Props> = ({ data, headings }) => {
                           alt="Options"
                           width={24}
                           height={24}
-                          className="w-4 h-4 relative left-[10px] sm:left-[20px]"
+                          className="w-4 h-4"
                         />
                       </button>
 
@@ -192,28 +203,26 @@ const WalletTable: React.FC<Props> = ({ data, headings }) => {
                           <button
                             className="block w-full text-left px-4 py-2 text-sm text-primary font-bold cursor-pointer hover:bg-gray-50"
                             onClick={() => {
-                              setSelectedWallet(wallet);
-                              setShowSidebar(true);
+                              setSelectedTrade(trade);
+                              setShowPopup(true);
                             }}
                           >
-                            View Wallet
+                            View Details
                           </button>
                           <div className="border-t border-gray-100"></div>
                           <button
-                            className="block w-full text-left px-4 py-2 text-sm text-red-500 font-bold cursor-pointer hover:bg-gray-50"
+                            className={`block w-full text-left px-4 py-2 text-sm text-red-500 font-bold  hover:bg-gray-50 ${
+                              trade.status.toLowerCase() === "canceled"
+                                ? "opacity-50 cursor-not-allowed"
+                                : "cursor-pointer"
+                            }`}
                             onClick={() => {
-                              banUser(wallet.data.userId);
+                              setSelectedTrade(trade);
+                              setShowResolvePopup(true);
                             }}
+                            disabled={trade.status.toLowerCase() === "canceled"}
                           >
-                            Ban User
-                          </button>
-                          <button
-                            className="block w-full text-left px-4 py-2 text-sm text-red-500 font-bold cursor-pointer hover:bg-gray-50"
-                            onClick={() => {
-                              suspendUser(wallet.data.userId);
-                            }}
-                          >
-                            Suspend User
+                            Cancel trade
                           </button>
                         </div>
                       )}
@@ -225,16 +234,28 @@ const WalletTable: React.FC<Props> = ({ data, headings }) => {
         </table>
       </div>
 
-      {/* Wallet.data Details Sidebar */}
-      {selectedWallet && (
-        <WalletSidebar
-          showSidebar={showSidebar}
-          onClose={() => setShowSidebar(false)}
-          wallet={selectedWallet.data}
+      {/* Trade Details Popup */}
+      {selectedTrade && (
+        <TradeDetailsPopup
+          showPopup={showPopup}
+          onClose={() => setShowPopup(false)}
+          trade={selectedTrade}
         />
       )}
+
+      {/* Show confirm modal from ui folder */}
+
+      <ConfirmModal
+        isOpen={showResolvePopup}
+        isLoading={isSubmitting}
+        onClose={() => setShowResolvePopup(false)}
+        onConfirm={handleSubmit}
+        title="Cancel Trade"
+        message="Are you sure you want to cancel this trade? This action cannot be undone."
+        style={"red"}
+      />
     </div>
   );
 };
 
-export default WalletTable;
+export default P2PTableActive;

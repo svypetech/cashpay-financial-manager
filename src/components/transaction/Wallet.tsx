@@ -28,7 +28,7 @@ const sortOptions = [
 export default function Wallet() {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
-  
+
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
@@ -42,23 +42,18 @@ export default function Wallet() {
   });
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchQuery,sortBy]);
+  }, [searchQuery, sortBy]);
 
   return (
     <div>
       {/* Search and Actions */}
-      <div
-        className={`flex flex-col sm:flex-row justify-between items-center mb-2 gap-4 mt-5`}
-      >
-        <div className={`relative w-[70%]`}>
-          <Search onSearch={setSearchQuery} />
-        </div>
-
+      <div className="flex flex-col gap-4 sm:gap-[28px] sm:flex-row">
+        <Search className="sm:w-[80%] w-full" onSearch={setSearchQuery} />
         <Sort
-          title="Sort by"
+          className="sm:w-[20%] w-full"
+          title="Sort"
           options={sortOptions}
           onSort={setSortBy}
-          className="w-[30%]"
         />
       </div>
       {loading ? (

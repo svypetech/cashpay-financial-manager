@@ -4,7 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import Image from "next/image";
 import { ChevronRight } from "lucide-react";
 import Link from "next/link";
-import ConfirmModal from "@/src/components/cards/ConfirmModal";
+import ConfirmModal from "@/src/components/ui/ConfirmModal";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -397,6 +397,7 @@ export default function SettingsPage() {
         warningText="*This operation cannot be undone"
         confirmText="Delete Account"
         cancelText="Cancel"
+        style="red"
       />
     </div>
   );

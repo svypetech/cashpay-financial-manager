@@ -5,7 +5,7 @@ import ChartDataLabels from "chartjs-plugin-datalabels";
 
 ChartJS.register(ArcElement, Tooltip, ChartDataLabels);
 
-const SystemHealthGauge = ({ value = 75 }) => {
+const SystemHealthGauge = ({ value }:{value:number}) => {
   const chartRef = useRef(null);
   const normalizedValue = Math.min(Math.max(0, value), 100);
 

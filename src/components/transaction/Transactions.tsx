@@ -9,17 +9,13 @@ import Error from "../ui/Error";
 import SkeletonTableLoader from "../skeletons/SkeletonTableLoader";
 import Sort from "../ui/Sort";
 import Search from "../ui/Search";
-const headings = ["ID", "From", "To", "Status", "Block#", "Date"];
-const navigationTabs = [
-  { id: "all", title: "All" },
-  { id: "completed", title: "Completed" },
-  { id: "pending", title: "Pending" },
-  { id: "failed", title: "Failed" },
-];
+import Tabs from "../ui/Tabs";
+const headings = ["ID", "From", "To", "Amount", "Status", "Block#","Date"];
+const navigationTabs = ["All", "Completed", "Pending", "Failed"];
 
 export default function Transactions() {
   const [currentPage, setCurrentPage] = useState(1);
-  const [activeTab, setActiveTab] = useState("all");
+  const [activeTab, setActiveTab] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
 
   const handlePageChange = (page: number) => {
@@ -30,7 +26,7 @@ export default function Transactions() {
     currentPage,
     limit: 10,
     searchQuery,
-    status: activeTab === "all" ? "" : activeTab,
+    status: activeTab === "All" ? "" : activeTab,
   });
 
   useEffect(() => {
@@ -41,32 +37,25 @@ export default function Transactions() {
     <div>
       {/* Navigation Tabs */}
       <div className="w-full flex items-center mb-4">
-        <div className="flex w-fit">
-          {navigationTabs.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`px-4 py-2 text-black ${
-                activeTab === tab.id
-                  ? "border-b-2 border-primary font-semibold"
-                  : "hover:text-gray-700 cursor-pointer"
-              }`}
-            >
-              {tab.title}
-            </button>
-          ))}
+        <div className="flex w-fit gap-2">
+          <Tabs
+            activeTab={activeTab}
+            tabs={navigationTabs}
+            setActiveTab={setActiveTab}
+            size="small"
+          />
         </div>
       </div>
 
       {/* Search and Actions */}
-      <div
-        className={`flex flex-col sm:flex-row justify-between items-center mb-2 gap-4`}
-      >
-        <div className={`relative w-full sm:w-[70%]`}>
-          <Search onSearch={setSearchQuery} />
-        </div>
-
-        <Sort onSort={() => {}} title="Sort By" options={[]} className="w-[30%]"/>
+      <div className="flex flex-col gap-4 sm:gap-[28px] sm:flex-row">
+        <Search className="sm:w-[80%] w-full" onSearch={setSearchQuery} />
+        <Sort
+          className="sm:w-[20%] w-full"
+          title="Sort"
+          options={[]}
+          onSort={() => {}}
+        />
       </div>
       {isLoading ? (
         <SkeletonTableLoader rowCount={10} headings={headings} />

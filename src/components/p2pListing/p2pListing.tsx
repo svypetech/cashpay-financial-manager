@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import Pagination from "../pagination/pagination";
-import Image from "next/image";
 import ListingTable from "@/src/components/tables/p2pListingTable";
 import useFetchP2PListing from "@/src/hooks/useFetchP2PListing";
 import SkeletonTableLoader from "../skeletons/SkeletonTableLoader";
@@ -36,26 +35,26 @@ export default function P2PListings() {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("");
 
-  const { listings, totalPages, isLoading, isError } = useFetchP2PListing({
+  const { listings, totalPages, isLoading, isError,setListings } = useFetchP2PListing({
     currentPage,
     limit: 10,
     searchQuery,
-    addVisibility: activeTab === "all" ? "" : activeTab,
+    addVisibility: activeTab === "all" ? "" : activeTab === "active" ? "true" : "false",
     sortBy: sortBy,
   });
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
 
-  useEffect(()=>{
-    setCurrentPage(1)
-  },[searchQuery,activeTab,sortBy])
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, activeTab, sortBy]);
 
   return (
     <div>
       {/* Navigation Tabs */}
       <div className="w-full flex items-center mb-4">
-        <div className="flex w-fit">
+        <div className="flex w-fit gap-5">
           {navigationTabs.map((tab, index) => (
             <button
               key={index}
@@ -73,23 +72,14 @@ export default function P2PListings() {
       </div>
 
       {/* Search and Actions */}
-      <div
-        className={`flex sm:flex-row flex-col  justify-between items-center mb-2 gap-4`}
-      >
-        <div className={`relative w-full sm:w-[70%] `}>
-          <Search onSearch={setSearchQuery} />
-        </div>
-
-        <div
-          className={"flex items-center gap-4 w-full font-[satoshi] sm:w-[30%]"}
-        >
-          <Sort
-            options={sortOptions}
-            onSort={setSortBy}
-            title="Sort by"
-            className="w-full"
-          />
-        </div>
+      <div className="flex flex-col gap-4 sm:gap-[28px] sm:flex-row">
+        <Search className="sm:w-[80%] w-full" onSearch={setSearchQuery} />
+        <Sort
+          className="sm:w-[20%] w-full"
+          title="Sort"
+          options={sortOptions}
+          onSort={setSortBy}
+        />
       </div>
       {isLoading ? (
         <SkeletonTableLoader rowCount={10} headings={headings} />
@@ -98,7 +88,7 @@ export default function P2PListings() {
       ) : listings.length === 0 ? (
         <Error text="No data found" />
       ) : (
-        <ListingTable headings={headings} data={listings} />
+        <ListingTable headings={headings} data={listings} setListings={setListings} />
       )}
       <Pagination
         currentPage={currentPage}

@@ -3,15 +3,17 @@ interface TabsProps {
     activeTab: string;
     setActiveTab: (tab: string) => void;
     size: string
+    className?: string;
+
 }
-export default function Tabs({ tabs,activeTab, setActiveTab,size }: TabsProps) {
+export default function Tabs({ tabs,activeTab, setActiveTab,size,className }: TabsProps) {
     
     const getSize = () =>{
         switch (size) {
             case "normal":
-                return "min-[400px]:text-[18px] text-sm"
+                return "min-[500px]:text-[18px] text-sm"
             case "small":
-                return "min-[400px]:text-sm text-xs"
+                return "min-[400px]:text-base text-xs"
             default:
                 return "min-[400px]:text-lg text-md"
         }
@@ -19,7 +21,7 @@ export default function Tabs({ tabs,activeTab, setActiveTab,size }: TabsProps) {
     return (
         
         <div className="flex items-center justify-between">
-            <div className={`flex gap-7 ${getSize()}`}>
+            <div className={`flex  min-[400px]:gap-7 gap-3 ${getSize()}`}>
             {tabs.map((tab:string) => (
                 <button
                 key={tab}
