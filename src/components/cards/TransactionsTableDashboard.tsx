@@ -6,7 +6,10 @@ import SkeletonTableLoader from "../skeletons/SkeletonTableLoader";
 const headings = ["ID", "From → To", "Status", "Block#", "Date"];
 
 export default function TransactionsTableDashboard() {
-  const { transactions, isLoading, isError } = useTransaction({currentPage: 1, limit: 3,searchQuery:""});
+  const { transactions, isLoading, isError } = useTransaction({
+    currentPage: 1,
+    limit: 3,
+  });
   return (
     <div className="lg:col-span-3 bg-white rounded-lg shadow-sm md:p-4 p-2">
       <div className="flex justify-between items-center mb-4">
@@ -55,8 +58,17 @@ export default function TransactionsTableDashboard() {
                       </div>
                     </td>
                     <td className="px-2 md:px-4 py-3 md:py-4 font-satoshi min-w-[120px] whitespace-nowrap">
-                      {shortenAddress(transaction.web3Data ?transaction.web3Data.transaction.from : "N/A")} →{" "}
-                      {shortenAddress(transaction.web3Data ?transaction.web3Data.transaction.to : "N/A")}
+                      {shortenAddress(
+                        transaction.web3Data
+                          ? transaction.web3Data.transaction.from
+                          : "N/A"
+                      )}{" "}
+                      →{" "}
+                      {shortenAddress(
+                        transaction.web3Data
+                          ? transaction.web3Data.transaction.to
+                          : "N/A"
+                      )}
                     </td>
                     <td className="p-3">
                       {transaction.status === "completed" ||

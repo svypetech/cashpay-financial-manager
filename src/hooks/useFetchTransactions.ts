@@ -34,11 +34,12 @@ export default function useFetchTransactions({
       try {
         setLoading(true);
         // Construct the URL based on whether debounced search query exists
-        let url =
-          debouncedSearchQuery !== ""
-            ? `${process.env.NEXT_PUBLIC_BACKEND_URL}transaction/transaction/?limit=${limit}&page=${currentPage}&search=${debouncedSearchQuery}`
-            : `${process.env.NEXT_PUBLIC_BACKEND_URL}transaction/transaction/?limit=${limit}&page=${currentPage}`;
+        let url = `${process.env.NEXT_PUBLIC_BACKEND_URL}transaction/transaction/?limit=${limit}&page=${currentPage}`;
         // Append status if provided
+
+        if (debouncedSearchQuery) {
+          url += `&search=${debouncedSearchQuery}`;
+        }
         if (status) {
           url += `&status=${status}`;
         }
