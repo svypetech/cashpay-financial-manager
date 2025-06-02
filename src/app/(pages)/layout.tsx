@@ -12,7 +12,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
     if (!AuthenticateUser()) {
       setTimeout(() => {
         isLoading(false);
-      }, 500);
+      }, 1000);
       router.push("/signin");
     } else {
       isLoading(false);

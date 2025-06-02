@@ -19,7 +19,6 @@ export default function useFetchSystemHealth() {
         );
         setSystemHealth(response.data.health);
       } catch (error) {
-        console.error("Error fetching system health:", error);
         setIsError(true);
       } finally {
         setIsLoading(false);
