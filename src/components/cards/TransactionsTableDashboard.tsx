@@ -1,5 +1,5 @@
 import useTransaction from "@/src/hooks/useFetchTransactions";
-import { ArrowLeftRight, ExternalLink, ChevronRight } from "lucide-react";
+import { ArrowLeftRight, ExternalLink } from "lucide-react";
 import { shortenAddress, timeAgo } from "@/src/utils/functions";
 import TransactionType from "@/src/lib/types/Transactions";
 import SkeletonTableLoader from "../skeletons/SkeletonTableLoader";
