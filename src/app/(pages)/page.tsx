@@ -1,16 +1,14 @@
 "use client";
 
 import { useEffect } from "react";
-
+import { useRouter } from "next/navigation";
 export default function Page() {
-  useEffect(()=>{
-    window.location.href="/dashboard"
-  },[])
+  const router = useRouter();
+  useEffect(() => {
+    router.push("/dashboard");
+  }, []);
 
-  
   return (
-    <div className=" flex flex-col items-between justify-between h-screen">
-
-    </div>
+    <div className=" flex flex-col items-between justify-between h-screen"></div>
   );
 }
