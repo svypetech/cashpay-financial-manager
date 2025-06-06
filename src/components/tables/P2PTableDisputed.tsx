@@ -45,12 +45,12 @@ const P2PTableDisputed: React.FC<Props> = ({ data, headings, setData }) => {
     buyer: {} as SellerBuyer,
   });
 
+  const [selectedIndex, setSelectedIndex] = useState<number>(0);
+  const needsPadding =
+    activeDropdown !== null &&
+    (selectedIndex >= data.length - 2 || data.length <= 2);
   const tableRef = useRef<HTMLDivElement>(null);
   const dropdownRefs = useRef<(HTMLDivElement | null)[]>([]);
-
-  const toggleDropdown = (index: number) => {
-    setActiveDropdown(activeDropdown === index ? null : index);
-  };
 
   const getSellerAndBuyerDetails = async (trade: Trade) => {
     if (!trade) return;
@@ -127,6 +127,10 @@ const P2PTableDisputed: React.FC<Props> = ({ data, headings, setData }) => {
     }
   };
 
+  const toggleDropdown = (index: number) => {
+    setSelectedIndex(index); // Set selected index first
+    setActiveDropdown(activeDropdown === index ? null : index);
+  };
   useEffect(() => {
     // Close dropdown when clicking outside
     const handleClickOutside = (event: MouseEvent) => {
@@ -144,53 +148,13 @@ const P2PTableDisputed: React.FC<Props> = ({ data, headings, setData }) => {
     };
   }, [activeDropdown]);
 
-  useEffect(() => {
-    // Adjust dropdown position
-    if (
-      activeDropdown !== null &&
-      tableRef.current &&
-      dropdownRefs.current[activeDropdown]
-    ) {
-      const tableRect = tableRef.current.getBoundingClientRect();
-      const dropdownRect =
-        dropdownRefs.current[activeDropdown]!.getBoundingClientRect();
-      const rowElement = dropdownRefs.current[activeDropdown]!.closest("tr");
-      const rowRect = rowElement?.getBoundingClientRect();
-
-      if (rowRect && dropdownRect) {
-        const spaceBelow = tableRect.bottom - rowRect.bottom;
-        const dropdownHeight = dropdownRect.height;
-
-        // Always open dropdown downwards for the first row or single row
-        if (activeDropdown === 0 || data.length === 1) {
-          dropdownRefs.current[activeDropdown]!.style.top = "100%";
-          dropdownRefs.current[activeDropdown]!.style.bottom = "auto";
-          dropdownRefs.current[activeDropdown]!.style.marginTop = "8px";
-          dropdownRefs.current[activeDropdown]!.style.marginBottom = "0";
-        } else {
-          // For other rows with multiple rows, open upwards if not enough space below
-          if (spaceBelow < dropdownHeight) {
-            dropdownRefs.current[activeDropdown]!.style.bottom = "100%";
-            dropdownRefs.current[activeDropdown]!.style.top = "auto";
-            dropdownRefs.current[activeDropdown]!.style.marginBottom = "8px";
-            dropdownRefs.current[activeDropdown]!.style.marginTop = "0";
-          } else {
-            // Open downwards
-            dropdownRefs.current[activeDropdown]!.style.top = "100%";
-            dropdownRefs.current[activeDropdown]!.style.bottom = "auto";
-            dropdownRefs.current[activeDropdown]!.style.marginTop = "8px";
-            dropdownRefs.current[activeDropdown]!.style.marginBottom = "0";
-          }
-        }
-      }
-    }
-  }, [activeDropdown, data.length]);
-
   return (
     <div className="flex-1 rounded-lg w-full py-5">
       {/* Table */}
       <div
-        className="rounded-lg overflow-x-auto w-full min-h-[150px]"
+        className={`rounded-lg overflow-x-auto w-full ${
+          needsPadding ? "pb-28" : ""
+        }`}
         ref={tableRef}
       >
         <table className="w-full text-left table-auto min-w-[600px]">

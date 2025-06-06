@@ -7,6 +7,8 @@ import WalletSidebar from "../transaction/WalletSidebar";
 import { Wallet } from "@/src/lib/types/Wallet";
 import axios from "axios";
 import { formatNumberToTwoDecimals } from "@/src/utils/functions";
+import ConfirmModal from "../ui/ConfirmModal";
+
 interface Props {
   headings: string[];
   data: Wallet[];
@@ -16,10 +18,23 @@ const WalletTable: React.FC<Props> = ({ data, headings }) => {
   const [activeDropdown, setActiveDropdown] = useState<number | null>(null);
   const [showSidebar, setShowSidebar] = useState(false);
   const [selectedWallet, setSelectedWallet] = useState<Wallet | null>(null);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [modalAction, setModalAction] = useState<"ban" | "suspend" | null>(
+    null
+  );
+
+  const [targetUserId, setTargetUserId] = useState<string>("");
+  const [targetUserName, setTargetUserName] = useState<string>("");
+  const [isLoading, setIsLoading] = useState(false);
   const tableRef = useRef<HTMLDivElement>(null);
   const dropdownRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const [selectedIndex, setSelectedIndex] = useState<number>(0);
+  const needsPadding =
+    activeDropdown !== null &&
+    (selectedIndex >= data.length - 2 || data.length <= 2);
 
   const banUser = async (userId: string) => {
+    setIsLoading(true);
     try {
       await axios.put(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}user/banUser/`,
@@ -32,16 +47,20 @@ const WalletTable: React.FC<Props> = ({ data, headings }) => {
           },
         }
       );
+      alert("User banned successfully");
     } catch (error) {
       alert("Error banning user");
     } finally {
+      setIsLoading(false);
       setActiveDropdown(null);
+      setShowConfirmModal(false);
     }
   };
 
-  const suspendUser = (userId: string) => {
+  const suspendUser = async (userId: string) => {
+    setIsLoading(true);
     try {
-      axios.put(
+      await axios.put(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}user/suspendUser/`,
         {
           id: userId,
@@ -52,12 +71,57 @@ const WalletTable: React.FC<Props> = ({ data, headings }) => {
           },
         }
       );
+      alert("User suspended successfully");
     } catch (error) {
       alert("Error suspending user");
     } finally {
+      setIsLoading(false);
       setActiveDropdown(null);
+      setShowConfirmModal(false);
     }
   };
+
+  const handleBanClick = (wallet: Wallet) => {
+    const userName = wallet.data.userName
+      ? `${wallet.data.userName.firstName} ${wallet.data.userName.lastName}`
+      : "N/A";
+
+    setTargetUserId(wallet.data.userId);
+    setTargetUserName(userName);
+    setModalAction("ban");
+    setShowConfirmModal(true);
+    setActiveDropdown(null);
+  };
+
+  const handleSuspendClick = (wallet: Wallet) => {
+    const userName = wallet.data.userName
+      ? `${wallet.data.userName.firstName} ${wallet.data.userName.lastName}`
+      : "N/A";
+
+    setTargetUserId(wallet.data.userId);
+    setTargetUserName(userName);
+    setModalAction("suspend");
+    setShowConfirmModal(true);
+    setActiveDropdown(null);
+  };
+
+  const handleConfirmAction = () => {
+    if (modalAction === "ban") {
+      banUser(targetUserId);
+    } else if (modalAction === "suspend") {
+      suspendUser(targetUserId);
+    }
+  };
+
+  const handleCloseModal = () => {
+    if (!isLoading) {
+      setShowConfirmModal(false);
+      setModalAction(null);
+      setTargetUserId("");
+      setTargetUserName("");
+    }
+  };
+
   useEffect(() => {
     // Close dropdown when clicking outside
     const handleClickOutside = (event: MouseEvent) => {
@@ -75,49 +139,8 @@ const WalletTable: React.FC<Props> = ({ data, headings }) => {
     };
   }, [activeDropdown]);
 
-  useEffect(() => {
-    // Adjust dropdown position
-    if (
-      activeDropdown !== null &&
-      tableRef.current &&
-      dropdownRefs.current[activeDropdown]
-    ) {
-      const tableRect = tableRef.current.getBoundingClientRect();
-      const dropdownRect =
-        dropdownRefs.current[activeDropdown]!.getBoundingClientRect();
-      const rowElement = dropdownRefs.current[activeDropdown]!.closest("tr");
-      const rowRect = rowElement?.getBoundingClientRect();
-
-      if (rowRect && dropdownRect) {
-        const spaceBelow = tableRect.bottom - rowRect.bottom;
-        const dropdownHeight = dropdownRect.height;
-
-        // Always open dropdown downwards for the first row or single row
-        if (activeDropdown === 0 || data.length === 1) {
-          dropdownRefs.current[activeDropdown]!.style.top = "100%";
-          dropdownRefs.current[activeDropdown]!.style.bottom = "auto";
-          dropdownRefs.current[activeDropdown]!.style.marginTop = "8px";
-          dropdownRefs.current[activeDropdown]!.style.marginBottom = "0";
-        } else {
-          // For other rows with multiple rows, open upwards if not enough space below
-          if (spaceBelow < dropdownHeight) {
-            dropdownRefs.current[activeDropdown]!.style.bottom = "100%";
-            dropdownRefs.current[activeDropdown]!.style.top = "auto";
-            dropdownRefs.current[activeDropdown]!.style.marginBottom = "8px";
-            dropdownRefs.current[activeDropdown]!.style.marginTop = "0";
-          } else {
-            // Open downwards
-            dropdownRefs.current[activeDropdown]!.style.top = "100%";
-            dropdownRefs.current[activeDropdown]!.style.bottom = "auto";
-            dropdownRefs.current[activeDropdown]!.style.marginTop = "8px";
-            dropdownRefs.current[activeDropdown]!.style.marginBottom = "0";
-          }
-        }
-      }
-    }
-  }, [activeDropdown, data.length]);
-
   const toggleDropdown = (index: number) => {
+    setSelectedIndex(index); // Set selected index first
     setActiveDropdown(activeDropdown === index ? null : index);
   };
 
@@ -125,7 +148,9 @@ const WalletTable: React.FC<Props> = ({ data, headings }) => {
     <div className="flex-1 rounded-lg w-full py-5">
       {/* Table */}
       <div
-        className="rounded-lg overflow-x-auto w-full min-h-[200px]"
+        className={`rounded-lg overflow-x-auto w-full ${
+          needsPadding ? "pb-28" : ""
+        }`}
         ref={tableRef}
       >
         <table className="w-full text-left table-auto min-w-[800px]">
@@ -166,9 +191,8 @@ const WalletTable: React.FC<Props> = ({ data, headings }) => {
                   <td className="p-2 md:p-4 font-satoshi min-w-[100px]">
                     {formatNumberToTwoDecimals(wallet.data.totalBalanceUSD)}
                   </td>
-                  <td className="relative p-2 md:p-4 font-satoshi  ">
-
-                    <div className="dropdown-container  ">
+                  <td className="relative p-2 md:p-4 font-satoshi">
+                    <div className="dropdown-container">
                       <button
                         className="absolute relative md:right-auto cursor-pointer"
                         onClick={() => toggleDropdown(index)}
@@ -194,6 +218,7 @@ const WalletTable: React.FC<Props> = ({ data, headings }) => {
                             onClick={() => {
                               setSelectedWallet(wallet);
                               setShowSidebar(true);
+                              setActiveDropdown(null);
                             }}
                           >
                             View Wallet
@@ -201,17 +226,13 @@ const WalletTable: React.FC<Props> = ({ data, headings }) => {
                           <div className="border-t border-gray-100"></div>
                           <button
                             className="block w-full text-left px-4 py-2 text-sm text-red-500 font-bold cursor-pointer hover:bg-gray-50"
-                            onClick={() => {
-                              banUser(wallet.data.userId);
-                            }}
+                            onClick={() => handleBanClick(wallet)}
                           >
                             Ban User
                           </button>
                           <button
                             className="block w-full text-left px-4 py-2 text-sm text-red-500 font-bold cursor-pointer hover:bg-gray-50"
-                            onClick={() => {
-                              suspendUser(wallet.data.userId);
-                            }}
+                            onClick={() => handleSuspendClick(wallet)}
                           >
                             Suspend User
                           </button>
@@ -225,14 +246,37 @@ const WalletTable: React.FC<Props> = ({ data, headings }) => {
         </table>
       </div>
 
-      {/* Wallet.data Details Sidebar */}
+      {/* Wallet Details Sidebar */}  
       {selectedWallet && (
         <WalletSidebar
           showSidebar={showSidebar}
           onClose={() => setShowSidebar(false)}
-          wallet={selectedWallet.data}
+          wallet={selectedWallet}
         />
       )}
+
+      {/* Confirm Modal */}
+      <ConfirmModal
+        isOpen={showConfirmModal}
+        onClose={handleCloseModal}
+        onConfirm={handleConfirmAction}
+        title={modalAction === "ban" ? "Ban User" : "Suspend User"}
+        message={
+          <span>
+            Are you sure you want to {modalAction} user{" "}
+            <strong>{targetUserName}</strong>?
+          </span>
+        }
+        warningText={
+          modalAction === "ban"
+            ? "This action will permanently ban the user from the platform."
+            : "This action will temporarily suspend the user's access."
+        }
+        cancelText="Cancel"
+        confirmText={modalAction === "ban" ? "Ban User" : "Suspend User"}
+        isLoading={isLoading}
+        style="red"
+      />
     </div>
   );
 };

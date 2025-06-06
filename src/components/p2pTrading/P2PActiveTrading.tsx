@@ -54,7 +54,7 @@ export default function P2PActiveTrading() {
       </div>
 
       {isLoading ? (
-        <SkeletonTableLoader headings={activeHeadings} rowCount={10} minWidth="1200" />
+        <SkeletonTableLoader headings={activeHeadings} rowCount={10} />
       ) : isError ? (
         <Error text="Something went wrong" />
       ) : activeTrades.length === 0 ? (

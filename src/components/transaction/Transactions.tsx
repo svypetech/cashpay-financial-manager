@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import Pagination from "../pagination/pagination";
-import Image from "next/image";
 import TransactionTable from "../tables/TransactionsTable";
 import useTransaction from "@/src/hooks/useFetchTransactions";
 import Error from "../ui/Error";
@@ -10,13 +9,20 @@ import SkeletonTableLoader from "../skeletons/SkeletonTableLoader";
 import Sort from "../ui/Sort";
 import Search from "../ui/Search";
 import Tabs from "../ui/Tabs";
-const headings = ["ID", "From", "To", "Amount", "Status", "Block#","Date"];
+
+const headings = ["ID", "From", "To", "Amount", "Status", "Block#", "Date"];
 const navigationTabs = ["All", "Completed", "Pending", "Failed"];
+const sortOptions = [
+  { label: "Amount", value: "amount" },
+  { label: "Date", value: "date" },
+  { label: "Token", value: "tokenName" },
+];
 
 export default function Transactions() {
   const [currentPage, setCurrentPage] = useState(1);
   const [activeTab, setActiveTab] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
+  const [sortBy, setSortBy] = useState("tokenName");
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -27,11 +33,12 @@ export default function Transactions() {
     limit: 10,
     searchQuery,
     status: activeTab === "All" ? "" : activeTab,
+    sortBy: sortBy,
   });
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchQuery, activeTab]);
+  }, [searchQuery, activeTab, sortBy]);
 
   return (
     <div>
@@ -53,8 +60,8 @@ export default function Transactions() {
         <Sort
           className="sm:w-[20%] w-full"
           title="Sort"
-          options={[]}
-          onSort={() => {}}
+          options={sortOptions}
+          onSort={setSortBy}
         />
       </div>
       {isLoading ? (

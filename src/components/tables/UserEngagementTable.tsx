@@ -30,7 +30,7 @@ const UserEngagementTable: React.FC<Props> = ({ data, headings }) => {
               data.map((user, index) => (
                 <tr
                   key={index}
-                  className="border-b border-gray-200 text-[12px] sm:text-[16px] cursor-pointer"
+                  className="border-b border-gray-200 text-[12px] sm:text-[16px]"
                 >
                   <td className="px-2 sm:px-4 py-3 sm:py-4 font-satoshi w-2/6 min-w-0 break-words">
                     {user._id}

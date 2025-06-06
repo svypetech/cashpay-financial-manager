@@ -13,15 +13,15 @@ export default function Tabs({ tabs,activeTab, setActiveTab,size,className }: Ta
             case "normal":
                 return "min-[500px]:text-[18px] text-sm"
             case "small":
-                return "min-[400px]:text-base text-xs"
+                return "min-[500px]:text-base text-xs"
             default:
-                return "min-[400px]:text-lg text-md"
+                return "min-[500px]:text-lg text-md"
         }
     }
     return (
         
         <div className="flex items-center justify-between">
-            <div className={`flex  min-[400px]:gap-7 gap-3 ${getSize()}`}>
+            <div className={`flex  min-[450px]:gap-7 gap-1 ${getSize()}`}>
             {tabs.map((tab:string) => (
                 <button
                 key={tab}

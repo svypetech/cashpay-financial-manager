@@ -7,11 +7,13 @@ export default function useFetchTransactions({
   limit,
   searchQuery,
   status,
+  sortBy = "tokenName",
 }: {
   currentPage: number;
   limit?: number;
   searchQuery?: string;
   status?: string;
+  sortBy?: string;
 }) {
   const [transactions, setTransactions] = useState([]);
   const [isLoading, setLoading] = useState(true);
@@ -43,6 +45,9 @@ export default function useFetchTransactions({
         if (status) {
           url += `&status=${status}`;
         }
+        if (sortBy) {
+          url += `&sort=${sortBy}`;
+        }
 
         // Make the API call
         const response = await axios.get(url, {
@@ -67,7 +72,7 @@ export default function useFetchTransactions({
     };
 
     fetchData();
-  }, [currentPage, limit, debouncedSearchQuery, status]);
+  }, [currentPage, limit, debouncedSearchQuery, status, sortBy]);
 
   return { transactions, isLoading, isError, totalPages };
 }

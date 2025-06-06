@@ -36,82 +36,82 @@ export default function UsersTableDashboard() {
         </a>
       </div>
       <div className="rounded-lg overflow-auto w-full">
-
-        {isLoading ? <SkeletonTableLoader rowCount={3} headings={headings} />
-        : isError ? 
-        <Error text="Something went wrong" />
-        : users.length === 0 ?
-        <Error text="No data found" />
-        :
-          
-      
-        <table className="w-full text-left min-w-[600px]">
-          <thead className="bg-secondary/10">
-            <tr className="font-satoshi text-[12px] sm:text-[16px]">
-              {headings.map((heading, index) => (
-                <th
-                  key={index}
-                  className={`p-2 sm:p-4 text-left ${getColumnWidthClass(
-                    index
-                  )}`}
-                >
-                  <span
-                    className={`${index === 2 ? "relative left-[-5px]" : ""}`}
-                  >
-                    {heading}
-                  </span>
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {Array.isArray(users) &&
-              users.map((user, index) => (
-                <tr
-                  key={index}
-                  className="border-b border-gray-200 text-[12px] sm:text-[16px]"
-                >
-                  <td
-                    className={`p-2 sm:p-3 font-satoshi font-bold text-primary ${getColumnWidthClass(
-                      0
-                    )}`}
-                  >
-                    {user.name.firstName + " " + user.name.lastName}
-                  </td>
-                  <td
-                    className={`p-2 sm:p-3 font-satoshi ${getColumnWidthClass(
-                      1
-                    )}`}
-                  >
-                    {user.email}
-                  </td>
-                  <td
-                    className={`p-2 sm:p-3 font-satoshi  ${getColumnWidthClass(
-                      2
-                    )}`}
-                  >
-                    {user.transactionCount}
-                  </td>
-                  <td
-                    className={`p-2 sm:p-3 font-satoshi ${getColumnWidthClass(
-                      3
+        {isLoading ? (
+          <SkeletonTableLoader rowCount={3} headings={headings} />
+        ) : isError ? (
+          <Error text="Something went wrong" />
+        ) : users.length === 0 ? (
+          <Error text="No data found" />
+        ) : (
+          <table className="w-full text-left min-w-[600px]">
+            <thead className="bg-secondary/10">
+              <tr className="font-satoshi text-[12px] sm:text-[16px]">
+                {headings.map((heading, index) => (
+                  <th
+                    key={index}
+                    className={`p-2 sm:p-4 text-left ${getColumnWidthClass(
+                      index
                     )}`}
                   >
                     <span
-                      className={`px-4 py-2 inline-block text-center rounded-xl font-semibold ${
-                        user.status === "Verified"
-                          ? "bg-[#71FB5533] text-[#20C000]"
-                          : "text-[#727272] bg-[#72727233]"
-                      }`}
+                      className={`${index === 2 ? "relative left-[-5px]" : ""}`}
                     >
-                      {user.status}
+                      {heading}
                     </span>
-                  </td>
-                </tr>
-              ))}
-          </tbody>
-        </table>
-}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {Array.isArray(users) &&
+                users.map((user, index) => (
+                  <tr
+                    key={index}
+                    className="border-b border-gray-200 text-[12px] sm:text-[16px]"
+                  >
+                    <td
+                      className={`p-2 sm:p-3 font-satoshi font-bold text-primary ${getColumnWidthClass(
+                        0
+                      )}`}
+                    >
+                      {user.name && user.name.firstName && user.name.lastName
+                        ? user.name.firstName + " " + user.name.lastName
+                        : "N/A"}
+                    </td>
+                    <td
+                      className={`p-2 sm:p-3 font-satoshi ${getColumnWidthClass(
+                        1
+                      )}`}
+                    >
+                      {user.email ? user.email : "N/A"}
+                    </td>
+                    <td
+                      className={`p-2 sm:p-3 font-satoshi  ${getColumnWidthClass(
+                        2
+                      )}`}
+                    >
+                      {user.transactionCount}
+                    </td>
+                    <td
+                      className={`p-2 sm:p-3 font-satoshi ${getColumnWidthClass(
+                        3
+                      )}`}
+                    >
+                      <span
+                        className={`px-4 py-2 inline-block text-center rounded-xl font-semibold ${
+                          user.status === "Verified"
+                            ? "bg-[#71FB5533] text-[#20C000]"
+                            : "text-[#727272] bg-[#72727233]"
+                        }`}
+                      >
+                        {user.status}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+            </tbody>
+          </table>
+        )}
       </div>
     </div>
   );

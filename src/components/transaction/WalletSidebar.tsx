@@ -4,11 +4,14 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { X } from "lucide-react";
 import { Wallet } from "@/src/lib/types/Wallet";
-import { cal_USDT_Value } from "@/src/utils/functions";
+import {
+  cal_USDT_Value,
+  formatNumberToTwoDecimals,
+} from "@/src/utils/functions";
 interface WalletSidebarProps {
   showSidebar: boolean;
   onClose: () => void;
-  wallet: Wallet["data"];
+  wallet: Wallet;
 }
 
 export default function WalletSidebar({
@@ -49,7 +52,7 @@ export default function WalletSidebar({
   if (!isVisible && !showSidebar) return null;
 
   return (
-    <div className="fixed inset-0 z-50 overflow-hidden">
+    <div className="fixed inset-0 z-100 overflow-hidden">
       {/* Overlay with fade animation */}
       <div
         className={`absolute inset-0 bg-black/50 transition-opacity duration-300 ${
@@ -82,30 +85,34 @@ export default function WalletSidebar({
           <div className="flex flex-col items-center mx-10 py-8 font-[satoshi] border-b border-gray-300">
             {/* Profile Image */}
             <div className="mb-4 h-32 w-32 overflow-hidden rounded-full">
-              <Image
-                src={wallet?.image ? wallet?.image : "/images/user-avatar.png"}
-                alt={wallet?.image || "User Avatar"}
-                width={128}
-                height={128}
+              <img
+                src={
+                  wallet.data.image && wallet.data.image.trim()
+                    ? wallet.data.image
+                    : "/images/blank-profile.webp"
+                }
+                alt={"User Avatar"}
                 className="h-full w-full object-cover"
               />
             </div>
 
             {/* User Info */}
             <h3 className="mb-1 text-xl font-semibold">
-              {wallet?.userName
-                ? wallet.userName.firstName + " " + wallet.userName.lastName
+              {wallet.data.userName
+                ? wallet.data.userName.firstName +
+                  " " +
+                  wallet.data.userName.lastName
                 : "N/A"}
             </h3>
             <p className="mb-6 text-xs text-gray-500">
-              User ID: {wallet?.userId}
+              User ID: {wallet.data.userId || "N/A"}
             </p>
 
             {/* Total Balance in center and bold and flex col */}
             <div className="flex flex-col mt-4">
               <p className="text-lg font-semibold">Total Balance</p>
               <p className="text-2xl font-bold text-primary">
-                USD {wallet?.totalBalanceUSD.toFixed(2)}
+                USD {formatNumberToTwoDecimals(wallet.data.totalBalanceUSD)}
               </p>
             </div>
           </div>
@@ -113,22 +120,25 @@ export default function WalletSidebar({
           {/* Crypto Holdings */}
           <div className="flex flex-col items-center mx-10 py-8 font-[satoshi] border-b border-gray-300">
             <div className="flex flex-col w-full">
-              {wallet.balances.items && wallet.balances.items.length > 0 ?
-                wallet.balances.items.map((item, index) => (
+              {wallet && wallet.data.balances.tokens ? (
+                wallet.data.balances.tokens.map((item, index) => (
                   <CryptoCard
                     key={index}
-                    symbol={item.contract_ticker_symbol}
+                    symbol={item.symbol}
                     amount={item.balance}
                     usdValue={cal_USDT_Value({
                       balance: item.balance,
-                      contract_decimals: item.contract_decimals,
-                      quote_rate: item.quote_rate,
+                      contract_decimals: Number(item.contractAddress),
+                      quote_rate: Number(item.quote) || 0,
                     })}
-                    iconUrl={item.logo_url || "/placeholder.svg"}
+                    iconUrl={item.logo || "/placeholder.svg"}
                   />
                 ))
-                : <p className="text-center text-gray-500">No crypto holdings available.</p>
-              }
+              ) : (
+                <p className="text-gray-500 text-center">
+                  No crypto holdings available.
+                </p>
+              )}
             </div>
           </div>
         </div>
@@ -150,9 +160,9 @@ function CryptoCard({ symbol, amount, usdValue, iconUrl }: CryptoCardProps) {
       <div className="flex items-center justify-between">
         <div className="flex items-center">
           <div className="mr-4 h-12 w-12 overflow-hidden rounded-full">
-            <Image
+            <img
               src={iconUrl || "/placeholder.svg"}
-              alt={`logo`}
+              alt={"logo"}
               width={48}
               height={48}
               className="h-full w-full object-cover"
@@ -165,7 +175,8 @@ function CryptoCard({ symbol, amount, usdValue, iconUrl }: CryptoCardProps) {
         </div>
         <div className="text-right">
           <p className="text-md text-primary">
-            = {usdValue.toFixed(2)} <span className="font-bold">USD</span>
+            = {formatNumberToTwoDecimals(usdValue)}{" "}
+            <span className="font-bold">USD</span>
           </p>
         </div>
       </div>

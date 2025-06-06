@@ -7,8 +7,10 @@ import useFetchTransactions from "@/src/hooks/useFetchTransactions";
 import SkeletonTableLoader from "../skeletons/SkeletonTableLoader";
 import Image from "next/image";
 import Search from "../ui/Search";
-
 import Error from "../ui/Error";
+import { useDownloadData } from "@/src/hooks/useDownloadData";
+import { useDateRangeFilter } from "@/src/hooks/useSetDate";
+import { DateRangePicker } from "@/src/components/ui/DateSelector";
 
 const headings = [
   "Transaction ID",
@@ -22,7 +24,6 @@ const headings = [
 export default function TransactionFrequencyPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
-  
 
   const { transactions, isLoading, isError, totalPages } = useFetchTransactions(
     {
@@ -32,6 +33,39 @@ export default function TransactionFrequencyPage() {
     }
   );
 
+  // Use the CSV download hook
+  const { downloadData, isDownloading } = useDownloadData({
+    filename: "transactions",
+    dateInFilename: true,
+  });
+
+  // Use the date range filter hook
+  const { dateRange, setDateRange, isFilterActive } = useDateRangeFilter();
+
+  // Define CSV field mapping
+  const csvFields = [
+    { key: "id", label: "Transaction ID" },
+    { key: "userId", label: "User ID" },
+    { key: "tokenName", label: "Currency" },
+    { key: "amount", label: "Amount" },
+    {
+      key: "status",
+      label: "Status",
+      transform: (value: string) => value?.toLowerCase() || "N/A",
+    },
+    {
+      key: "date",
+      label: "Timestamp",
+      transform: (value: string) => {
+        try {
+          return value ? new Date(value).toLocaleString() : "N/A";
+        } catch {
+          return "Invalid Date";
+        }
+      },
+    },
+  ];
+
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
@@ -40,11 +74,18 @@ export default function TransactionFrequencyPage() {
     setSearchQuery(value);
   };
 
+  // Handle download button click
+  const handleDownload = async () => {
+    const result = await downloadData(transactions, csvFields);
+
+    if (!result.success) {
+      alert(result.error || "Failed to download data. Please try again.");
+    }
+  };
 
   useEffect(() => {
     setCurrentPage(1);
   }, [searchQuery]);
-  
 
   return (
     <div>
@@ -53,31 +94,46 @@ export default function TransactionFrequencyPage() {
       </h1>
 
       {/* Search and Actions */}
-      <div className="flex flex-col md:grid md:grid-cols-4 justify-between items-center mb-6 gap-4">
-        <div className="relative w-full md:w-auto md:col-span-2">
+      <div className="flex flex-col md:flex-row items-center mb-6 gap-4 w-full">
+        {/* Search Bar - 60% on desktop, full width on mobile */}
+        <div className="md:w-[60%] w-full">
           <Search className="w-full" onSearch={handleSearch} />
         </div>
 
-        <div className="flex items-center gap-4 w-full md:col-span-2 font-[satoshi]">
-          <button className="w-[50%] flex justify-between items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50">
-            <span>Filter</span>
-            <Image
-              src="/icons/calendar.svg"
-              alt="Calendar"
-              width={24}
-              height={24}
+        {/* Filter and Download - 40% on desktop, full width on mobile */}
+        <div className="flex flex-col sm:flex-row gap-4 md:w-[40%] w-full">
+          <div className="sm:w-[50%] w-full">
+            <DateRangePicker
+              dateRange={dateRange}
+              onDateRangeChange={setDateRange}
+              placeholder="Filter"
             />
-          </button>
+          </div>
 
-          <button className="w-[50%] flex justify-center items-center gap-2 px-4 py-2 font-bold border border-primary rounded-lg text-primary bg-white hover:bg-blue-50 ml-auto md:ml-0">
-            <span>Download</span>
-            <Image
-              src="/icons/download.svg"
-              alt="Download"
-              width={24}
-              height={24}
-            />
-          </button>
+          <div className="sm:w-[50%] w-full">
+            <button
+              onClick={handleDownload}
+              disabled={
+                isDownloading ||
+                isLoading ||
+                !transactions ||
+                transactions.length === 0
+              }
+              className="w-full flex justify-center items-center gap-2 px-4 py-2 font-bold border-[1px] border-primary rounded-[8px] text-primary bg-white hover:bg-blue-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <span>{isDownloading ? "Downloading..." : "Download"}</span>
+              {isDownloading ? (
+                <div className="w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+              ) : (
+                <Image
+                  src="/icons/download.svg"
+                  alt="Download"
+                  width={24}
+                  height={24}
+                />
+              )}
+            </button>
+          </div>
         </div>
       </div>
 
@@ -88,10 +144,7 @@ export default function TransactionFrequencyPage() {
       ) : transactions.length === 0 ? (
         <Error text="No data found" />
       ) : (
-        <TransactionFrequencyTable
-          headings={headings}
-          data={transactions}
-        />
+        <TransactionFrequencyTable headings={headings} data={transactions} />
       )}
 
       <Pagination

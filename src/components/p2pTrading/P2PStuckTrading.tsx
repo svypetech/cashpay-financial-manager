@@ -74,7 +74,7 @@ export default function P2PStuckTrading() {
         <SkeletonTableLoader
           headings={stuckHeadings}
           rowCount={10}
-          minWidth="1200"
+          
         />
       ) : isError ? (
         <Error text="Something went wrong" />

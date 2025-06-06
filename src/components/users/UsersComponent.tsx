@@ -23,6 +23,7 @@ const sortOptions = [
   { label: "None", value: "" },
   { label: "Date", value: "date" },
   { label: "Status", value: "userStatus" },
+  { label: "Title", value: "title" },
 ];
 
 export default function UsersComponent() {
@@ -47,13 +48,6 @@ export default function UsersComponent() {
   // Handle page changes
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
-  };
-
-  // Handle search
-
-  // Handle sort
-  const handleSort = (value: string) => {
-    setSortBy(value);
   };
 
   // Filter and sort users based on activeTab, searchQuery, and sortBy
@@ -114,11 +108,7 @@ export default function UsersComponent() {
 
       {/* Content area */}
       {isLoading ? (
-        <SkeletonTableLoader
-          headings={headings}
-          rowCount={10}
-          minWidth="1200"
-        />
+        <SkeletonTableLoader headings={headings} rowCount={10} />
       ) : isError ? (
         <Error text="Something went wrong" />
       ) : filteredUsers.length === 0 ? (

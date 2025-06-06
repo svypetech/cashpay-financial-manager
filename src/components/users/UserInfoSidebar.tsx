@@ -81,7 +81,7 @@ export default function UserProfileSidebar({
             {/* Profile Image */}
             <div className="mb-4 h-32 w-32 overflow-hidden rounded-full flex items-center justify-center">
               <img
-                src={user && user.selfieUrl || "/placeholder.svg?height=200&width=200"}
+                src={user && user.selfieUrl || "/images/blank-profile.webp"}
                 alt={
                   user && user.name && user.name.firstName + " " + user.name.lastName || "User Avatar"
                 }

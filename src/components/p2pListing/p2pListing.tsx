@@ -35,13 +35,15 @@ export default function P2PListings() {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("");
 
-  const { listings, totalPages, isLoading, isError,setListings } = useFetchP2PListing({
-    currentPage,
-    limit: 10,
-    searchQuery,
-    addVisibility: activeTab === "all" ? "" : activeTab === "active" ? "true" : "false",
-    sortBy: sortBy,
-  });
+  const { listings, totalPages, isLoading, isError, setListings } =
+    useFetchP2PListing({
+      currentPage,
+      limit: 10,
+      searchQuery,
+      addVisibility:
+        activeTab === "all" ? "" : activeTab === "active" ? "true" : "false",
+      sortBy: sortBy,
+    });
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
@@ -88,7 +90,11 @@ export default function P2PListings() {
       ) : listings.length === 0 ? (
         <Error text="No data found" />
       ) : (
-        <ListingTable headings={headings} data={listings} setListings={setListings} />
+        <ListingTable
+          headings={headings}
+          data={listings}
+          setListings={setListings}
+        />
       )}
       <Pagination
         currentPage={currentPage}

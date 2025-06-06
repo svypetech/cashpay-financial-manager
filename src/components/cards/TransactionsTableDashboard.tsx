@@ -85,7 +85,9 @@ export default function TransactionsTableDashboard() {
                     </td>
                     <td className="px-2 md:px-4 py-3 md:py-4 font-satoshi min-w-[120px] whitespace-nowrap font-medium">
                       {shortenAddress(
-                        transaction.web3Data.transaction.blockHash
+                        transaction.web3Data
+                          ? transaction.web3Data.transaction.blockHash
+                          : "N/A"
                       )}
                     </td>
                     <td className="px-2 md:px-4 py-3 md:py-4 font-satoshi min-w-[120px] whitespace-nowrap">

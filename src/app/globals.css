@@ -1,53 +1,76 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&family=Poppins:wght@400;500;600;700&display=swap');
-@import url('https://api.fontshare.com/v2/css?f[]=satoshi@400,500,600,700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&family=Poppins:wght@400;500;600;700&display=swap");
+@import url("https://api.fontshare.com/v2/css?f[]=satoshi@400,500,600,700&display=swap");
 
 @import "tailwindcss";
+
+@import "tw-animate-css";
+@custom-variant dark (&:is(.dark *));
 @tailwind utilities;
 
 @theme {
   --font-poppins: Poppins, sans-serif;
   --font-satoshi: "Satoshi", "sans-serif";
-  --color-primary: #143881; 
-  --color-primary2: #061F51;
-  --color-darkBg: #1E1E1E;
-  --color-secondary: #27AAE1;
-  --color-secondary2: #27AAE11A;
-  --color-textLight: #1D1D1D; 
-  --color-gray: #4D4C4C;
+  --color-primary: #143881;
+  --color-primary2: #061f51;
+  --color-darkBg: #1e1e1e;
+  --color-secondary: #27aae1;
+  --color-secondary2: #27aae11a;
+  --color-textLight: #1d1d1d;
+  --color-gray: #4d4c4c;
   --color-gray2: #333333;
-  --color-green: #71FB5514;
-  --color-skyblue: #27AAE1;
-  --color-success: #20C000;
-  --color-successBg: #71FB5533;
-  --color-darkText: #B3B3B3;
+  --color-green: #71fb5514;
+  --color-skyblue: #27aae1;
+  --color-success: #20c000;
+  --color-successBg: #71fb5533;
+  --color-darkText: #b3b3b3;
   --color-borderDark: #848484;
-  --color-fail: #DF1D1D;
-
+  --color-fail: #df1d1d;
 }
 
-
+:root {
+  --primary: #143881;
+  --primary2: #061f51;
+  --darkBg: #1e1e1e;
+  --secondary: #27aae1;
+  --secondary2: #27aae11a;
+  --textLight: #1d1d1d;
+  --gray: #4d4c4c;
+  --gray2: #333333;
+  --green: #71fb5514;
+  --skyblue: #27aae1;
+  --success: #20c000;
+  --successBg: #71fb5533;
+  --darkText: #b3b3b3;
+  --borderDark: #848484;
+  --fail: #df1d1d;
+}
 @font-face {
-  font-family: 'Satoshi';
-  src: url('/fonts/Satoshi_Complete/Fonts/WEB/fonts/Satoshi-Regular.woff2') format('woff2'),
-    url('/fonts/Satoshi_Complete/Fonts/WEB/fonts/Satoshi-Regular.woff') format('woff');
+  font-family: "Satoshi";
+  src: url("/fonts/Satoshi_Complete/Fonts/WEB/fonts/Satoshi-Regular.woff2")
+      format("woff2"),
+    url("/fonts/Satoshi_Complete/Fonts/WEB/fonts/Satoshi-Regular.woff")
+      format("woff");
   font-weight: 400;
   font-style: normal;
 }
 
 @font-face {
-  font-family: 'Satoshi';
-  src: url('/fonts/Satoshi_Complete/Fonts/WEB/fonts/Satoshi-Bold.woff2') format('woff2'),
-    url('/fonts/Satoshi_Complete/Fonts/WEB/fonts/Satoshi-Bold.woff') format('woff');
+  font-family: "Satoshi";
+  src: url("/fonts/Satoshi_Complete/Fonts/WEB/fonts/Satoshi-Bold.woff2")
+      format("woff2"),
+    url("/fonts/Satoshi_Complete/Fonts/WEB/fonts/Satoshi-Bold.woff")
+      format("woff");
   font-weight: 700;
   font-style: normal;
 }
 
 /* Custom Font Classes */
 .font-satoshi {
-  font-family: 'Satoshi', sans-serif;
+  font-family: "Satoshi", sans-serif;
 }
 
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
   /* height: 100%; */
@@ -55,13 +78,12 @@ html, body {
   /* overflow-y: hidden; */
 }
 
-
 html {
   scroll-behavior: smooth;
 }
 
 body {
-  font-family: 'Satoshi','Poppins', 'Montserrat', Arial, Helvetica, sans-serif;
+  font-family: "Satoshi", "Poppins", "Montserrat", Arial, Helvetica, sans-serif;
   background-color: white;
   color: black;
   transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
@@ -70,16 +92,16 @@ body {
 /* Dark Mode */
 .dark body {
   background-color: #121212;
-  color: #F8FAFC;
+  color: #f8fafc;
 }
 
 /* Custom Tailwind Classes */
 .font-poppins {
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
 }
 
 .font-montserrat {
-  font-family: 'Montserrat', sans-serif;
+  font-family: "Montserrat", sans-serif;
 }
 
 .sidebar-enter {
@@ -99,3 +121,6 @@ body {
   transform: translateX(100%);
   transition: transform 300ms ease-in-out;
 }
+
+
+

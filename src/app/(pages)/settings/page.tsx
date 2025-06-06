@@ -23,7 +23,7 @@ export default function SettingsPage() {
   const [isEditing, setIsEditing] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [image, setImage] = useState<string>("/images/user-avatar.png");
+  const [image, setImage] = useState<string>("/");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -144,6 +144,8 @@ export default function SettingsPage() {
       alert("An error occurred while updating your profile");
     } finally {
       setIsSubmitting(false);
+      setIsEditing(false);
+      window.location.reload(); // Reload the page to reflect changes
     }
   };
 
@@ -342,7 +344,7 @@ export default function SettingsPage() {
         </div>
 
         {/* Action Items */}
-        <div className="mt-8 space-y-4 border-t border-gray-200 pt-6">
+        <div className="mt-8 space-y-4 pt-6">
           <Link
             href={"/change-password"}
             className="w-full cursor-pointer border-b border-gray-300 flex items-center justify-between py-3 px-1 text-left group"
@@ -362,8 +364,8 @@ export default function SettingsPage() {
             <ChevronRight className="h-5 w-5 text-gray-400 group-hover:text-gray-600" />
           </Link>
 
-          <div className="border-t border-gray-100"></div>
-          <div className="border-t border-gray-100"></div>
+          
+         
 
           {/* Delete Account button */}
           <button

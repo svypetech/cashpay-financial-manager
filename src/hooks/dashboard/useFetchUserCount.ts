@@ -9,7 +9,7 @@ type DashboardUserCount = {
 };
 
 export default function useFetchDashboardUsersCount() {
-  const [userCount, setUserCount] = useState<DashboardUserCount>(
+  const [userCount, setUserCount] = useState<DashboardUserCount >(
     {} as DashboardUserCount
   );
   const [isLoading, setIsLoading] = useState<boolean>(true);

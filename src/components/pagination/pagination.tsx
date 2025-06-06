@@ -53,27 +53,34 @@ export default function Pagination({
 
   return (
     <section className="sm:px-8" >
-      <div className="grid grid-cols-2 gap-x-10 sm:gap-x-20 md:gap-x-0 md:flex items-center justify-between md:px-6 py-4">
+      <div className="grid grid-cols-2 gap-x-4 sm:gap-x-10 md:gap-x-20 lg:gap-x-0 lg:flex items-center justify-between md:px-6 py-4">
         <button
           onClick={() => handlePageChange(currentPage - 1)}
           disabled={currentPage <= 1}
-          className="flex items-center gap-2 px-4 py-2 border-2 border-primary font-bold rounded-lg text-primary bg-white hover:bg-gray-50 disabled:opacity-50 cursor-pointer"
+          className="flex items-center justify-center gap-1 sm:gap-2 px-2 sm:px-3 md:px-4 py-2 border-2 border-primary font-bold rounded-lg text-primary bg-white hover:bg-gray-50 disabled:opacity-50 cursor-pointer text-xs sm:text-sm md:text-base"
         >
-          <Image src="/icons/arrow-left.svg" alt="Arrow right" width={24} height={24} />
-          <span>Previous</span>
+          <Image 
+            src="/icons/arrow-left.svg" 
+            alt="Arrow left" 
+            width={16} 
+            height={16} 
+            className="sm:w-5 sm:h-5 md:w-6 md:h-6"
+          />
+          <span className="hidden xs:inline sm:inline">Previous</span>
+          <span className="xs:hidden sm:hidden">Prev</span>
         </button>
 
-        <div className="flex mt-5 md:mt-0 justify-center items-center gap-1 col-span-2 order-1 md:order-none">
+        <div className="flex mt-4 sm:mt-5 lg:mt-0 justify-center items-center gap-1 col-span-2 order-1 lg:order-none">
           {generatePagination().map((page, index) =>
             page === "..." ? (
-              <span key={`ellipsis-${index}`} className="px-1 font-bold">
+              <span key={`ellipsis-${index}`} className="px-1 font-bold text-xs sm:text-sm md:text-base">
                 ...
               </span>
             ) : (
               <button
                 key={page}
                 onClick={() => handlePageChange(Number(page))}
-                className={`w-8 h-8 flex items-center justify-center rounded-full font-semibold font-[satoshi] ${
+                className={`w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 flex items-center justify-center rounded-full font-semibold font-[satoshi] text-xs sm:text-sm md:text-base ${
                   currentPage === page
                     ? "bg-secondary/10 font-medium"
                     : "hover:bg-gray-100"
@@ -88,10 +95,17 @@ export default function Pagination({
         <button
           onClick={() => handlePageChange(currentPage + 1)}
           disabled={currentPage >= totalPages}
-          className="flex items-center gap-2 px-4 py-2 border-2 border-primary font-bold rounded-lg text-primary bg-white hover:bg-gray-50 disabled:opacity-50 cursor-pointer"
+          className="flex items-center justify-center gap-1 sm:gap-2 px-2 sm:px-3 md:px-4 py-2 border-2 border-primary font-bold rounded-lg text-primary bg-white hover:bg-gray-50 disabled:opacity-50 cursor-pointer text-xs sm:text-sm md:text-base"
         >
-          <span>Next</span>
-          <Image src="/icons/arrow-right.svg" alt="Arrow right" width={24} height={24} />
+          <span className="hidden xs:inline sm:inline">Next</span>
+          <span className="xs:hidden sm:hidden">Next</span>
+          <Image 
+            src="/icons/arrow-right.svg" 
+            alt="Arrow right" 
+            width={16} 
+            height={16} 
+            className="sm:w-5 sm:h-5 md:w-6 md:h-6"
+          />
         </button>
       </div>
     </section>

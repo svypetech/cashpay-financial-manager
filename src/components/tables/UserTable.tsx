@@ -34,13 +34,16 @@ function formatDate(dateString: string): string {
   }
 }
 
-
 const UserTable: React.FC<Props> = ({ data, headings, setData }) => {
   const [activeDropdown, setActiveDropdown] = useState<number | null>(null);
   const [showUserSidebar, setShowUserSidebar] = useState(false);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const tableRef = useRef<HTMLDivElement>(null);
   const dropdownRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const [selectedIndex, setSelectedIndex] = useState<number>(0);
+  const needsPadding =
+    activeDropdown !== null &&
+    (selectedIndex >= data.length - 2 || data.length <= 2);
 
   useEffect(() => {
     // Close dropdown when clicking outside
@@ -59,41 +62,8 @@ const UserTable: React.FC<Props> = ({ data, headings, setData }) => {
     };
   }, [activeDropdown]);
 
-  useEffect(() => {
-    // Adjust dropdown position for the last few rows
-    if (
-      activeDropdown !== null &&
-      tableRef.current &&
-      dropdownRefs.current[activeDropdown]
-    ) {
-      const tableRect = tableRef.current.getBoundingClientRect();
-      const dropdownRect =
-        dropdownRefs.current[activeDropdown]!.getBoundingClientRect();
-      const rowElement = dropdownRefs.current[activeDropdown]!.closest("tr");
-      const rowRect = rowElement?.getBoundingClientRect();
-
-      if (rowRect && dropdownRect) {
-        const spaceBelow = tableRect.bottom - rowRect.bottom;
-        const dropdownHeight = dropdownRect.height;
-
-        // If there's not enough space below, open the dropdown upwards
-        if (spaceBelow < dropdownHeight) {
-          dropdownRefs.current[activeDropdown]!.style.bottom = "100%";
-          dropdownRefs.current[activeDropdown]!.style.top = "auto";
-          dropdownRefs.current[activeDropdown]!.style.marginBottom = "8px";
-          dropdownRefs.current[activeDropdown]!.style.marginTop = "0";
-        } else {
-          // Otherwise, open downwards (default)
-          dropdownRefs.current[activeDropdown]!.style.top = "100%";
-          dropdownRefs.current[activeDropdown]!.style.bottom = "auto";
-          dropdownRefs.current[activeDropdown]!.style.marginTop = "8px";
-          dropdownRefs.current[activeDropdown]!.style.marginBottom = "0";
-        }
-      }
-    }
-  }, [activeDropdown]);
-
   const toggleDropdown = (index: number) => {
+    setSelectedIndex(index); // Set selected index first
     setActiveDropdown(activeDropdown === index ? null : index);
   };
 
@@ -106,7 +76,12 @@ const UserTable: React.FC<Props> = ({ data, headings, setData }) => {
   return (
     <div className="flex-1 rounded-lg w-full py-5">
       {/* Table */}
-      <div className="rounded-lg overflow-x-auto w-full" ref={tableRef}>
+      <div
+        className={`rounded-lg overflow-x-auto w-full ${
+          needsPadding ? "pb-28" : ""
+        }`}
+        ref={tableRef}
+      >
         <table className="w-full text-left min-w-[1000px]">
           <thead className="bg-secondary/10">
             <tr className="font-satoshi text-[12px] sm:text-[16px] whitespace-nowrap">

@@ -10,11 +10,7 @@ import SystemHealthSkeleton from "../skeletons/SystemHealthSkeleton";
 
 export default function Overview() {
   const { dashboardCards, isLoading, isError } = useFetchDashboardCards();
-  const {
-    systemHealth,
-    isLoading: isLoadingSystemHealth,
-    isError: isErrorSystemHealth,
-  } = useFetchSystemHealth();
+  
 
   return (
     <div>
@@ -52,16 +48,9 @@ export default function Overview() {
       )}
 
       {/* First Row - Transactions (3 cols) + System Health (1 col) */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-6">
+      
         <TransactionsTableDashboard />
-        {isLoadingSystemHealth ? (
-          <SystemHealthSkeleton />
-        ) : isErrorSystemHealth ? (
-          <Error text="Something went wrong" />
-        ) : (
-          <SystemHealthGauge value={systemHealth} />
-        )}
-      </div>
+      
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <TotalUsersCard />

@@ -5,7 +5,7 @@ export default function useUser({
   currentPage,
   limit,
   sortBy = "",
-  filterStatus = "",
+  filterStatus,
 }: {
   currentPage: number;
   limit: number;
@@ -23,11 +23,11 @@ export default function useUser({
       setIsError(false);
 
       try {
-        let url = `${process.env.NEXT_PUBLIC_BACKEND_URL}user/all?page=${currentPage}&limit=${limit}&sortBy=${sortBy}`;
-        if (sortBy === "") {
-          url = `${process.env.NEXT_PUBLIC_BACKEND_URL}user/all?page=${currentPage}&limit=${limit}`;
+        let url = `${process.env.NEXT_PUBLIC_BACKEND_URL}user/all?page=${currentPage}&limit=${limit}`;
+        if (sortBy !== "") {
+          url = `${process.env.NEXT_PUBLIC_BACKEND_URL}user/all?page=${currentPage}&limit=${limit}&sortBy=${sortBy}`;
         }
-        if (filterStatus) {
+        if (filterStatus !== "") {
           url += `&filterStatus=${filterStatus}`;
         }
 

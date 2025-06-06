@@ -56,7 +56,7 @@ export default function P2PDisputedTrading() {
 
             {/* Table with loading, error, and empty states */}
             {isLoading ? (
-                <SkeletonTableLoader headings={disputedHeadings} rowCount={10} minWidth="1200" />
+                <SkeletonTableLoader headings={disputedHeadings} rowCount={10} />
             ) : isError ? (
                 <Error text="Something went wrong" />
             ) : disputedTrades.length === 0 ? (

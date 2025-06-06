@@ -163,8 +163,8 @@ export default function TransactionManagementPopup({
                   </span>
                   <span
                     className={`text-sm text-gray-600 font-semibold ${
-                      transaction.status === "completed"
-                        ? "text-green-500"
+                      transaction.status.toLowerCase() === "completed"
+                        ? "text-success"
                         : "text-[#DF1D1D]"
                     }`}
                   >
