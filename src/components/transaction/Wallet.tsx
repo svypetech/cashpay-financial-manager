@@ -9,7 +9,6 @@ import SkeletonTableLoader from "../skeletons/SkeletonTableLoader";
 import Error from "../ui/Error";
 import Sort from "../ui/Sort";
 import Search from "../ui/Search";
-import { set } from "date-fns";
 
 const headings = [
   "User ID",
@@ -56,22 +55,24 @@ export default function Wallet() {
           onSort={setSortBy}
         />
       </div>
-      {loading ? (
-        <SkeletonTableLoader rowCount={10} headings={headings} />
-      ) : isError ? (
-        <Error text="Something went wrong" />
-      ) : wallets.length === 0 ? (
-        <Error text="No data found" />
-      ) : (
-        <>
-          <WalletTable headings={headings} data={wallets} />
-          <Pagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={handlePageChange}
-          />
-        </>
-      )}
+      <div className="mt-4">
+        {loading ? (
+          <SkeletonTableLoader rowCount={10} headings={headings} />
+        ) : isError ? (
+          <Error text="Something went wrong" />
+        ) : wallets.length === 0 ? (
+          <Error text="No data found" />
+        ) : (
+          <>
+            <WalletTable headings={headings} data={wallets} />
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+            />
+          </>
+        )}
+      </div>
     </div>
   );
 }

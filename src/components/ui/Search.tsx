@@ -13,7 +13,7 @@ export default function Search({
         onChange={(e) => {
           onSearch(e.target.value);
         }}
-        className={`w-full pl-4 pr-10 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring focus:ring-primary focus:border-transparent`}
+        className={`w-full pl-4 pr-10 py-2 rounded-lg focus:outline-none focus:ring focus:ring-primary shadow-[0px_0px_4px_0px_rgba(0,0,0,0.2)] bg-white`}
       />
       <div className="absolute inset-y-0 right-0 flex items-center pr-4 pointer-events-none">
         <img

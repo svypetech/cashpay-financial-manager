@@ -68,32 +68,29 @@ export default function P2PStuckTrading() {
           onSort={setSortBy}
         />
       </div>
+      <div className="mt-4">
+        {/* Table with loading, error, and empty states */}
+        {isLoading ? (
+          <SkeletonTableLoader headings={stuckHeadings} rowCount={10} />
+        ) : isError ? (
+          <Error text="Something went wrong" />
+        ) : stuckTrades.length === 0 ? (
+          <Error text="No data found" />
+        ) : (
+          <P2PTableStuck
+            headings={stuckHeadings}
+            data={stuckTrades}
+            setData={setTrades}
+          />
+        )}
 
-      {/* Table with loading, error, and empty states */}
-      {isLoading ? (
-        <SkeletonTableLoader
-          headings={stuckHeadings}
-          rowCount={10}
-          
+        {/* Pagination */}
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
         />
-      ) : isError ? (
-        <Error text="Something went wrong" />
-      ) : stuckTrades.length === 0 ? (
-        <Error text="No data found" />
-      ) : (
-        <P2PTableStuck
-          headings={stuckHeadings}
-          data={stuckTrades}
-          setData={setTrades}
-        />
-      )}
-
-      {/* Pagination */}
-      <Pagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={handlePageChange}
-      />
+      </div>
     </div>
   );
 }

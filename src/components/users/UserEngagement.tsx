@@ -24,12 +24,15 @@ const headings = [
 export default function UserEngagement() {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
-  const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
 
+  const { startDate, endDate, handleDateChange } = useDateRangeFilter();
   const { users, isLoading, isError, totalPages } = useFetchUsers({
     currentPage,
     limit: 10,
-    filterStatus: "", // Assuming we want to filter active users
+    filterStatus: "",
+    startDate,
+    endDate, // Assuming we want to filter active users
+    searchQuery,
   });
 
   // Use the CSV download hook
@@ -39,7 +42,6 @@ export default function UserEngagement() {
   });
 
   // Use the date range filter hook
-  const { dateRange, setDateRange, isFilterActive } = useDateRangeFilter();
 
   // Define CSV field mapping for User Engagement
   const csvFields = [
@@ -101,7 +103,7 @@ export default function UserEngagement() {
 
   // Handle download button click
   const handleDownload = async () => {
-    const dataToDownload = filteredUsers.length > 0 ? filteredUsers : users;
+    const dataToDownload = users.length > 0 ? users : users;
     const result = await downloadData(dataToDownload, csvFields);
 
     if (!result.success) {
@@ -110,23 +112,13 @@ export default function UserEngagement() {
   };
 
   useEffect(() => {
-    if (!users) return;
-    let filtered = users;
-    // Filter by search query
-    if (searchQuery) {
-      const query = searchQuery.toLowerCase();
-      filtered = filtered.filter((user) =>
-        user.name.toLowerCase().includes(query)
-      );
-    }
-    // end effect
-    setFilteredUsers(filtered);
-  }, [searchQuery, users]);
+    setCurrentPage(1); // Reset to first page when search query or date range changes
+  }, [searchQuery, startDate, endDate]);
 
   return (
     <div>
       {/* Search and Filter Section */}
-      <div className="flex flex-col md:flex-row items-center mb-6 gap-4 w-full">
+      <div className="flex flex-col md:flex-row items-center mb-4 gap-4 w-full mt-6">
         {/* Search Bar - 70% */}
         <div className="md:w-[60%] w-full">
           <Search className="w-full" onSearch={handleSearch} />
@@ -136,8 +128,9 @@ export default function UserEngagement() {
         <div className="flex flex-col sm:flex-row gap-4 md:w-[40%] w-full">
           <div className="sm:w-[50%] w-full">
             <DateRangePicker
-              dateRange={dateRange}
-              onDateRangeChange={setDateRange}
+              startDate={startDate}
+              endDate={endDate}
+              onDateChange={handleDateChange}
               placeholder="Filter"
             />
           </div>
@@ -173,10 +166,10 @@ export default function UserEngagement() {
         <SkeletonTableLoader headings={headings} rowCount={10} />
       ) : isError ? (
         <Error text="Error fetching users" />
-      ) : filteredUsers.length === 0 ? (
+      ) : users.length === 0 ? (
         <Error text="No data found" />
       ) : (
-        <UserEngagementTable headings={headings} data={filteredUsers} />
+        <UserEngagementTable headings={headings} data={users} />
       )}
 
       <Pagination

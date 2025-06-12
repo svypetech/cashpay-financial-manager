@@ -96,7 +96,7 @@ const P2PTableStuck: React.FC<Props> = ({ data, headings, setData }) => {
     <div className="flex-1 rounded-lg w-full py-5">
       {/* Table */}
       <div
-        className={`rounded-lg overflow-x-auto w-full ${
+        className={`rounded-lg overflow-x-auto w-full pb-[30px] ${
           needsPadding ? "pb-28" : ""
         }`}
         ref={tableRef}

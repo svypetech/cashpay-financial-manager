@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { Mail, Calendar } from "lucide-react";
+import { formatNumberToTwoDecimals } from "@/src/utils/functions";
 
 interface SellerBuyer {
   name: {
@@ -86,7 +87,10 @@ export default function DisputeDetailsCard({
           {/* Trade Stats*/}
           <div className="text-sm mb-2">
             <span className="font-bold">{user.totalTrades}</span> trades |{" "}
-            <span className="font-bold">{user.successRate}%</span> success rate
+            <span className="font-bold">
+              {formatNumberToTwoDecimals(user.successRate)}%
+            </span>{" "}
+            success rate
           </div>
         </div>
       </div>

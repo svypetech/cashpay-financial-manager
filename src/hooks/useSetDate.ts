@@ -1,48 +1,23 @@
 import { useState } from "react";
-import { DateRange } from "react-day-picker";
 
-interface UseDateRangeFilterProps {
-  initialDateRange?: DateRange;
-}
+export const useDateRangeFilter = () => {
+  const [startDate, setStartDate] = useState<Date>();
+  const [endDate, setEndDate] = useState<Date>();
 
-export const useDateRangeFilter = ({
-  initialDateRange,
-}: UseDateRangeFilterProps = {}) => {
-  const [dateRange, setDateRange] = useState<DateRange | undefined>(
-    initialDateRange
-  );
+  const handleDateChange = (start?: Date, end?: Date) => {
+    setStartDate(start);
+    setEndDate(end);
+    console.log("Date range changed:", {
+      start: start ? start.toISOString() : undefined,
+      end: end ? end.toISOString() : undefined,
+    });
 
-  const clearDateRange = () => {
-    setDateRange(undefined);
-  };
-
-  // Check if filter is active
-  const isFilterActive = () => {
-    return dateRange?.from !== undefined || dateRange?.to !== undefined;
-  };
-
-  // Format date range for display
-  const formatDateRange = () => {
-    if (!dateRange?.from && !dateRange?.to) {
-      return "Filter by date";
-    }
-
-    if (dateRange?.from && dateRange?.to) {
-      return `${dateRange.from.toLocaleDateString()} - ${dateRange.to.toLocaleDateString()}`;
-    }
-
-    if (dateRange?.from) {
-      return `From ${dateRange.from.toLocaleDateString()}`;
-    }
-
-    return "Filter by date";
+    // Log in ISO format
   };
 
   return {
-    dateRange,
-    setDateRange,
-    clearDateRange,
-    formatDateRange,
-    isFilterActive,
+    startDate,
+    endDate,
+    handleDateChange,
   };
 };

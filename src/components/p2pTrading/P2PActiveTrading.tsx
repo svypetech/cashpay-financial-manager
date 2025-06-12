@@ -10,8 +10,16 @@ import Search from "../ui/Search";
 import SkeletonTableLoader from "../skeletons/SkeletonTableLoader";
 import Error from "../ui/Error";
 
-
-const activeHeadings = ["Trade ID", "Seller ID", "Buyer ID", "Amount", "Currency", "Payment", "Status", "Actions"];
+const activeHeadings = [
+  "Trade ID",
+  "Seller ID",
+  "Buyer ID",
+  "Amount",
+  "Currency",
+  "Payment",
+  "Status",
+  "Actions",
+];
 
 const sortOptions = [
   { label: "None", value: "" },
@@ -25,20 +33,17 @@ export default function P2PActiveTrading() {
   const [sortBy, setSortBy] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
 
-
-
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
 
-  const { activeTrades, setTrades, totalPages, isLoading, isError } = useFetchActiveTrades(
-    {
+  const { activeTrades, setTrades, totalPages, isLoading, isError } =
+    useFetchActiveTrades({
       currentPage,
       limit: 10,
       searchQuery,
-      sortBy
-    }
-  );
+      sortBy,
+    });
 
   return (
     <div>
@@ -52,23 +57,28 @@ export default function P2PActiveTrading() {
           onSort={setSortBy}
         />
       </div>
+      <div className="mt-4">
+        {isLoading ? (
+          <SkeletonTableLoader headings={activeHeadings} rowCount={10} />
+        ) : isError ? (
+          <Error text="Something went wrong" />
+        ) : activeTrades.length === 0 ? (
+          <Error text="No data found" />
+        ) : (
+          <P2PTableActive
+            headings={activeHeadings}
+            data={activeTrades}
+            setData={setTrades}
+          />
+        )}
 
-      {isLoading ? (
-        <SkeletonTableLoader headings={activeHeadings} rowCount={10} />
-      ) : isError ? (
-        <Error text="Something went wrong" />
-      ) : activeTrades.length === 0 ? (
-        <Error text="No data found" />
-      ) : (
-        <P2PTableActive headings={activeHeadings} data={activeTrades} setData={setTrades} />
-      )}
-
-      {/* Pagination */}
-      <Pagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={handlePageChange}
-      />
+        {/* Pagination */}
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
+      </div>
     </div>
   );
 }

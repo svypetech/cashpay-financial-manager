@@ -25,6 +25,7 @@ export default function P2PTrading() {
         </div>
       </div>
 
+      
       {/* Render the active tab component */}
       {activeTab === "Active" && <P2PActiveTrading />}
       {activeTab === "Disputed" && <P2PDisputedTrading />}

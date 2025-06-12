@@ -83,24 +83,26 @@ export default function P2PListings() {
           onSort={setSortBy}
         />
       </div>
-      {isLoading ? (
-        <SkeletonTableLoader rowCount={10} headings={headings} />
-      ) : isError ? (
-        <Error text="Something went wrong" />
-      ) : listings.length === 0 ? (
-        <Error text="No data found" />
-      ) : (
-        <ListingTable
-          headings={headings}
-          data={listings}
-          setListings={setListings}
+      <div className="mt-4">
+        {isLoading ? (
+          <SkeletonTableLoader rowCount={10} headings={headings} />
+        ) : isError ? (
+          <Error text="Something went wrong" />
+        ) : listings.length === 0 ? (
+          <Error text="No data found" />
+        ) : (
+          <ListingTable
+            headings={headings}
+            data={listings}
+            setListings={setListings}
+          />
+        )}
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
         />
-      )}
-      <Pagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={handlePageChange}
-      />
+      </div>
     </div>
   );
 }

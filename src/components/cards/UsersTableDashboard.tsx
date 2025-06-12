@@ -2,6 +2,7 @@ import useFetchDashboardUsers from "@/src/hooks/dashboard/useFetchDashboardUsers
 import { ExternalLink } from "lucide-react";
 import SkeletonTableLoader from "../skeletons/SkeletonTableLoader";
 import Error from "../ui/Error";
+import ColourfulBlock from "../ui/ColourfulBlock";
 
 const headings = ["Name", "Email", "Transactions", "Status"];
 
@@ -97,15 +98,15 @@ export default function UsersTableDashboard() {
                         3
                       )}`}
                     >
-                      <span
-                        className={`px-4 py-2 inline-block text-center rounded-xl font-semibold ${
+                      <ColourfulBlock
+                        className={`${
                           user.status === "Verified"
                             ? "bg-[#71FB5533] text-[#20C000]"
                             : "text-[#727272] bg-[#72727233]"
                         }`}
-                      >
-                        {user.status}
-                      </span>
+                        text={user.status}
+                        size="sm"
+                      ></ColourfulBlock>
                     </td>
                   </tr>
                 ))}

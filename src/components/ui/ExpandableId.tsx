@@ -7,9 +7,16 @@ import { CopyIcon, CheckIcon } from "lucide-react";
 interface ExpandableIdProps {
   id: string;
   className?: string;
+  onMouseEnter?: () => void;
+  onMouseLeave?: () => void;
 }
 
-const ExpandableId: React.FC<ExpandableIdProps> = ({ id, className = "" }) => {
+const ExpandableId: React.FC<ExpandableIdProps> = ({
+  id,
+  className = "",
+  onMouseEnter,
+  onMouseLeave,
+}) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [copied, setCopied] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -20,12 +27,14 @@ const ExpandableId: React.FC<ExpandableIdProps> = ({ id, className = "" }) => {
       clearTimeout(timeoutRef.current);
     }
     setIsExpanded(true);
+    onMouseEnter?.();
   };
 
   const handleMouseLeave = () => {
     // Add delay before hiding to allow movement to tooltip
     timeoutRef.current = setTimeout(() => {
       setIsExpanded(false);
+      onMouseLeave?.();
     }, 200);
   };
 

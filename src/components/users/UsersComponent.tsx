@@ -35,12 +35,12 @@ export default function UsersComponent() {
   const [filterStatus, setFilterStatus] = useState("");
 
   const {
-    users: allUsers,
+    users,
     totalPages,
     isLoading,
     isError,
     setUsers,
-  } = useFetchUsers({ currentPage, limit: 10, sortBy, filterStatus });
+  } = useFetchUsers({ currentPage, limit: 10, sortBy, filterStatus,searchQuery });
 
   // Define tabs for the Tabs component
   const tabs = ["All", "Verified", "Pending Verifications"];
@@ -51,11 +51,9 @@ export default function UsersComponent() {
   };
 
   // Filter and sort users based on activeTab, searchQuery, and sortBy
-  const filteredUsers = useMemo(() => {
-    if (!allUsers) return [];
 
+  useEffect(() => {
     // First filter by tab
-    let filtered = allUsers;
     if (activeTab === "All") {
       setFilterStatus("");
     } else if (activeTab === "Verified") {
@@ -63,27 +61,11 @@ export default function UsersComponent() {
     } else if (activeTab === "Pending Verifications") {
       setFilterStatus("Pending");
     }
-
-    // Then apply search filter if searchQuery exists
-    if (searchQuery.trim()) {
-      const search = searchQuery.toLowerCase();
-      filtered = filtered.filter((user) => {
-        if (!user.name) return false;
-        let name = user.name.firstName + " " + user.name.lastName;
-        return (
-          name.toLowerCase().includes(search) ||
-          user.email?.toLowerCase().includes(search) ||
-          user.userId?.toString().includes(search)
-        );
-      });
-    }
-
-    return filtered;
-  }, [allUsers, activeTab, searchQuery]);
+  }, [activeTab]);
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [filterStatus]);
+  }, [filterStatus, searchQuery, sortBy]);
 
   return (
     <>
@@ -111,13 +93,13 @@ export default function UsersComponent() {
         <SkeletonTableLoader headings={headings} rowCount={10} />
       ) : isError ? (
         <Error text="Something went wrong" />
-      ) : filteredUsers.length === 0 ? (
+      ) : users.length === 0 ? (
         <Error text="No data found" />
       ) : (
         <div className="mt-4">
           <UserTable
             headings={headings}
-            data={filteredUsers}
+            data={users}
             setData={setUsers}
           />
           <Pagination

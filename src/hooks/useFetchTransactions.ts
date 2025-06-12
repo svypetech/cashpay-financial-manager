@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import Transaction from "../lib/types/Transactions";
+
 
 export default function useFetchTransactions({
   currentPage,
@@ -8,12 +8,16 @@ export default function useFetchTransactions({
   searchQuery,
   status,
   sortBy = "tokenName",
+  startDate,
+  endDate,
 }: {
   currentPage: number;
   limit?: number;
   searchQuery?: string;
   status?: string;
   sortBy?: string;
+  startDate?: Date;
+  endDate?: Date;
 }) {
   const [transactions, setTransactions] = useState([]);
   const [isLoading, setLoading] = useState(true);
@@ -48,6 +52,12 @@ export default function useFetchTransactions({
         if (sortBy) {
           url += `&sort=${sortBy}`;
         }
+        if (startDate) {
+          url += `&startDate=${startDate.toISOString()}`;
+        }
+        if (endDate) {
+          url += `&endDate=${endDate.toISOString()}`;
+        }
 
         // Make the API call
         const response = await axios.get(url, {
@@ -72,7 +82,7 @@ export default function useFetchTransactions({
     };
 
     fetchData();
-  }, [currentPage, limit, debouncedSearchQuery, status, sortBy]);
+  }, [currentPage, limit, debouncedSearchQuery, status, sortBy,startDate, endDate]);
 
   return { transactions, isLoading, isError, totalPages };
 }

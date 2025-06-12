@@ -152,7 +152,7 @@ const UserTable: React.FC<Props> = ({ data, headings, setData }) => {
                           alt="Options"
                           width={24}
                           height={24}
-                          className="w-4 h-4 min-[1400px]:relative min-[1400px]:right-[25px]"
+                          className="w-4 h-4 relative right-[20px] min-[1400px]:relative min-[1400px]:right-[25px]"
                         />
                       </button>
 

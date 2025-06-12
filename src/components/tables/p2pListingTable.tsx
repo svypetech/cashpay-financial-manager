@@ -101,7 +101,7 @@ const ListingsTable: React.FC<Props> = ({ data, headings }) => {
     <div className="flex-1 rounded-lg w-full py-5">
       {/* Table - Add conditional padding bottom for dropdown space */}
       <div
-        className={`rounded-lg overflow-x-auto w-full ${
+        className={`rounded-lg overflow-x-auto w-full pb-[30px] ${
           needsPadding ? "pb-28" : ""
         }`}
         ref={tableRef}

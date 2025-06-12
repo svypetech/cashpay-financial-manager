@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import TransactionDetailsPopup from "../transaction/TransactionDetailsPopup";
 import Transaction from "@/src/lib/types/Transactions";
 import { formatDate, shortenAddress } from "@/src/utils/functions";
+import ExpandableId from "../ui/ExpandableId";
 interface Props {
   headings: string[];
   data: Transaction[];
@@ -11,7 +12,9 @@ interface Props {
 
 const TransactionFrequencyTable: React.FC<Props> = ({ data, headings }) => {
   const [showPopup, setShowPopup] = useState(false);
-  const [selectedTransaction, setSelectedTransaction] = useState<Transaction>({} as Transaction);
+  const [selectedTransaction, setSelectedTransaction] = useState<Transaction>(
+    {} as Transaction
+  );
 
   // Function to get column width class based on heading index
   const getColumnWidthClass = (index: number): string => {
@@ -43,7 +46,9 @@ const TransactionFrequencyTable: React.FC<Props> = ({ data, headings }) => {
               {headings.map((heading, index) => (
                 <th
                   key={index}
-                  className={`px-2 sm:px-4 py-3 sm:py-4 text-left font-[700] ${getColumnWidthClass(index)}`}
+                  className={`px-2 sm:px-4 py-3 sm:py-4 text-left font-[700] ${getColumnWidthClass(
+                    index
+                  )}`}
                 >
                   {heading}
                 </th>
@@ -61,19 +66,41 @@ const TransactionFrequencyTable: React.FC<Props> = ({ data, headings }) => {
                   key={index}
                   className="border-b border-gray-200 text-[12px] sm:text-[16px] cursor-pointer"
                 >
-                  <td className={`px-2 sm:px-4 py-3 sm:py-4 font-satoshi ${getColumnWidthClass(0)}`}>
-                    {shortenAddress(transaction.id)}
+                  <td
+                    className={`px-2 sm:px-4 py-3 sm:py-4 font-satoshi ${getColumnWidthClass(
+                      0
+                    )}`}
+                  >
+                    <ExpandableId id={transaction.id} />
                   </td>
-                  <td className={`px-2 sm:px-4 py-3 sm:py-4 font-satoshi font-bold text-primary min-w-0 break-words ${getColumnWidthClass(1)}`}>
-                    {transaction.userId ? shortenAddress(transaction.userId) : "N/A"}
+                  <td
+                    className={`px-2 sm:px-4 py-3 sm:py-4 font-satoshi font-bold text-primary min-w-0 break-words ${getColumnWidthClass(
+                      1
+                    )}`}
+                  >
+                    <ExpandableId
+                      id={transaction.userId ? transaction.userId : "N/A"}
+                    />
                   </td>
-                  <td className={`px-2 sm:px-4 py-3 sm:py-4 font-satoshi min-w-0 break-words ${getColumnWidthClass(2)}`}>
+                  <td
+                    className={`px-2 sm:px-4 py-3 sm:py-4 font-satoshi min-w-0 break-words ${getColumnWidthClass(
+                      2
+                    )}`}
+                  >
                     {transaction.tokenName}
                   </td>
-                  <td className={`px-2 sm:px-4 py-3 sm:py-4 font-satoshi min-w-0 ${getColumnWidthClass(3)}`}>
+                  <td
+                    className={`px-2 sm:px-4 py-3 sm:py-4 font-satoshi min-w-0 ${getColumnWidthClass(
+                      3
+                    )}`}
+                  >
                     {transaction.amount}
                   </td>
-                  <td className={`px-2 sm:px-4 py-3 sm:py-4 font-satoshi ${getColumnWidthClass(4)}`}>
+                  <td
+                    className={`px-2 sm:px-4 py-3 sm:py-4 font-satoshi ${getColumnWidthClass(
+                      4
+                    )}`}
+                  >
                     <p
                       className={`px-4 py-2 w-fit rounded-xl font-semibold ${
                         transaction.status === "Pending"
@@ -81,10 +108,15 @@ const TransactionFrequencyTable: React.FC<Props> = ({ data, headings }) => {
                           : "bg-[#71FB5533] text-[#20C000]"
                       }`}
                     >
-                      {transaction.status.charAt(0).toUpperCase() + transaction.status.slice(1)}
+                      {transaction.status.charAt(0).toUpperCase() +
+                        transaction.status.slice(1)}
                     </p>
                   </td>
-                  <td className={`px-2 sm:px-4 py-3 sm:py-4 font-satoshi ${getColumnWidthClass(5)}`}>
+                  <td
+                    className={`px-2 sm:px-4 py-3 sm:py-4 font-satoshi ${getColumnWidthClass(
+                      5
+                    )}`}
+                  >
                     {formatDate(transaction.date)}
                   </td>
                 </tr>

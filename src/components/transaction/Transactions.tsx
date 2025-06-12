@@ -62,6 +62,7 @@ export default function Transactions() {
           title="Sort"
           options={sortOptions}
           onSort={setSortBy}
+          sortBy={sortBy}
         />
       </div>
       {isLoading ? (

@@ -155,9 +155,12 @@ const WalletTable: React.FC<Props> = ({ data, headings }) => {
       >
         <table className="w-full text-left table-auto min-w-[800px]">
           <thead className="bg-secondary/10">
-            <tr className="font-satoshi text-[12px] md:text-[16px] p-2 md:p-4">
+            <tr className="font-satoshi text-[12px] md:text-[16px] px-2 sm:px-4 py-3  sm:py-4">
               {headings.map((heading, index) => (
-                <th key={index} className="p-2 md:p-4 text-left">
+                <th
+                  key={index}
+                  className="px-2 sm:px-4 py-3  sm:py-4 text-left"
+                >
                   {heading}
                 </th>
               ))}
@@ -170,28 +173,28 @@ const WalletTable: React.FC<Props> = ({ data, headings }) => {
                   key={index}
                   className="border-b border-gray-200 text-[12px] md:text-[16px]"
                 >
-                  <td className="p-2 md:p-4 font-satoshi min-w-[100px] break-words">
+                  <td className="px-2 sm:px-4 py-3  sm:py-4 font-satoshi min-w-[100px] break-words">
                     {wallet.data.userId}
                   </td>
-                  <td className="p-2 md:p-4 font-satoshi font-bold text-primary min-w-[120px] break-words">
+                  <td className="px-2 sm:px-4 py-3  sm:py-4 font-satoshi font-bold text-primary min-w-[120px] break-words">
                     {wallet.data.userName
                       ? wallet.data.userName.firstName +
                         " " +
                         wallet.data.userName.lastName
                       : "N/A"}
                   </td>
-                  <td className="p-2 md:p-4 font-satoshi min-w-[150px] break-words">
+                  <td className="px-2 sm:px-4 py-3  sm:py-4 font-satoshi min-w-[150px] break-words">
                     {wallet.data.cardUser ? "True" : "False"}
                   </td>
-                  <td className="p-2 md:p-4 font-satoshi min-w-[120px]">
+                  <td className="px-2 sm:px-4 py-3  sm:py-4 font-satoshi min-w-[120px]">
                     <span className="relative">
                       {wallet.data.cryptoHoldings}
                     </span>
                   </td>
-                  <td className="p-2 md:p-4 font-satoshi min-w-[100px]">
+                  <td className="px-2 sm:px-4 py-3  sm:py-4 font-satoshi min-w-[100px]">
                     {formatNumberToTwoDecimals(wallet.data.totalBalanceUSD)}
                   </td>
-                  <td className="relative p-2 md:p-4 font-satoshi">
+                  <td className="relative px-2 sm:px-4 py-3  sm:py-4 font-satoshi">
                     <div className="dropdown-container">
                       <button
                         className="absolute relative md:right-auto cursor-pointer"
@@ -246,7 +249,7 @@ const WalletTable: React.FC<Props> = ({ data, headings }) => {
         </table>
       </div>
 
-      {/* Wallet Details Sidebar */}  
+      {/* Wallet Details Sidebar */}
       {selectedWallet && (
         <WalletSidebar
           showSidebar={showSidebar}

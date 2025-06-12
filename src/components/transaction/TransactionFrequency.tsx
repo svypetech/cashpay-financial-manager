@@ -21,15 +21,43 @@ const headings = [
   "Timestamp",
 ];
 
+const csvFields = [
+  { key: "id", label: "Transaction ID" },
+  { key: "userId", label: "User ID" },
+  { key: "tokenName", label: "Currency" },
+  { key: "amount", label: "Amount" },
+  {
+    key: "status",
+    label: "Status",
+    transform: (value: string) => value?.toLowerCase() || "N/A",
+  },
+  {
+    key: "date",
+    label: "Timestamp",
+    transform: (value: string) => {
+      try {
+        return value ? new Date(value).toLocaleString() : "N/A";
+      } catch {
+        return "Invalid Date";
+      }
+    },
+  },
+];
+
+
+
 export default function TransactionFrequencyPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
+  const { startDate, endDate, handleDateChange } = useDateRangeFilter();
 
   const { transactions, isLoading, isError, totalPages } = useFetchTransactions(
     {
       currentPage,
       limit: 10,
-      searchQuery: searchQuery,
+      searchQuery,
+      startDate,
+      endDate,
     }
   );
 
@@ -40,31 +68,8 @@ export default function TransactionFrequencyPage() {
   });
 
   // Use the date range filter hook
-  const { dateRange, setDateRange, isFilterActive } = useDateRangeFilter();
 
   // Define CSV field mapping
-  const csvFields = [
-    { key: "id", label: "Transaction ID" },
-    { key: "userId", label: "User ID" },
-    { key: "tokenName", label: "Currency" },
-    { key: "amount", label: "Amount" },
-    {
-      key: "status",
-      label: "Status",
-      transform: (value: string) => value?.toLowerCase() || "N/A",
-    },
-    {
-      key: "date",
-      label: "Timestamp",
-      transform: (value: string) => {
-        try {
-          return value ? new Date(value).toLocaleString() : "N/A";
-        } catch {
-          return "Invalid Date";
-        }
-      },
-    },
-  ];
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -85,7 +90,7 @@ export default function TransactionFrequencyPage() {
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchQuery]);
+  }, [searchQuery, startDate, endDate]);
 
   return (
     <div>
@@ -104,8 +109,9 @@ export default function TransactionFrequencyPage() {
         <div className="flex flex-col sm:flex-row gap-4 md:w-[40%] w-full">
           <div className="sm:w-[50%] w-full">
             <DateRangePicker
-              dateRange={dateRange}
-              onDateRangeChange={setDateRange}
+              startDate={startDate}
+              endDate={endDate}
+              onDateChange={handleDateChange}
               placeholder="Filter"
             />
           </div>

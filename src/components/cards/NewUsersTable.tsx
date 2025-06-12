@@ -1,5 +1,6 @@
 import useFetchUsers from "@/src/hooks/useFetchUsers";
 import SkeletonTableLoader from "../skeletons/SkeletonTableLoader";
+import ColourfulBlock from "../ui/ColourfulBlock";
 
 export default function NewUsers() {
   const { users, isLoading, isError } = useFetchUsers({
@@ -48,19 +49,17 @@ export default function NewUsers() {
             </thead>
             <tbody>
               {users.map((user, index) => (
-                <tr key={index} className="border-t border-gray-100">
-                  <td className="px-4 py-2">
+                <tr key={index} className="border-t border-gray-200">
+                  <td className="px-4 py-3">
                     <a href="#" className="text-primary font-semibold">
                       {user.name.firstName} {user.name.lastName}
                     </a>
                   </td>
-                  <td className="px-4 py-2 text-gray-600">
+                  <td className="px-4 py-3 text-gray-600">
                     {user.email ? user.email : "N/A"}
                   </td>
-                  <td className="px-4 py-2">
-                    <span className="inline-block bg-[#71FB5533] text-[#20C000] text-sm font-semibold px-4 py-2 rounded-xl">
-                      {user.verificationStatus}
-                    </span>
+                  <td className="px-4 py-3">
+                    <ColourfulBlock size="sm" text={user.verificationStatus} className="bg-[#71FB5533] text-[#20C000]" />
                   </td>
                 </tr>
               ))}
