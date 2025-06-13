@@ -25,7 +25,7 @@ export default function UsersTableDashboard() {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm md:p-4">
+    <div className="bg-white rounded-lg shadow-sm md:p-4 p-3">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-lg font-semibold">Users</h2>
         <a

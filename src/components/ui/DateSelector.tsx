@@ -148,6 +148,18 @@ export function DateRangePicker({
     setInternalStartDate(undefined);
     setInternalEndDate(undefined);
     onDateChange(undefined, undefined);
+    setOpen(false); // Close the calendar when clearing
+  };
+
+  // Handle outside click - reset dates to undefined
+  const handleOpenChange = (isOpen: boolean) => {
+    if (!isOpen) {
+      // When closing (clicking outside), reset internal dates to undefined
+      setInternalStartDate(undefined);
+      setInternalEndDate(undefined);
+      onDateChange(undefined, undefined);
+    }
+    setOpen(isOpen);
   };
 
   const formatDisplayText = () => {
@@ -199,9 +211,9 @@ export function DateRangePicker({
 
   return (
     <div className={cn("grid gap-2", className)}>
-      <Popover open={open} onOpenChange={setOpen}>
+      <Popover open={open} onOpenChange={handleOpenChange}>
         <PopoverTrigger asChild>
-          <button className="flex justify-between items-center w-full px-4 py-2 bg-white border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
+          <button className="flex justify-between items-center w-full px-4 py-2 bg-white shadow-[0px_0px_4px_0px_rgba(0,0,0,0.2)] rounded-lg text-gray-700 hover:bg-gray-50 transition-colors">
             <span className="font-medium">{formatDisplayText()}</span>
             <img
               className="h-[24px] w-[24px] text-gray-500"

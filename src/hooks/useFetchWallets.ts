@@ -1,7 +1,8 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { Wallet } from "@/src/lib/types/Wallet";
 
-export default function Wallet({
+export default function useFetchWallets({
   currentPage,
   limit,
   sortBy,
@@ -12,7 +13,7 @@ export default function Wallet({
   sortBy: string;
   searchQuery: string;
 }) {
-  const [wallets, setWallets] = useState([]);
+  const [wallets, setWallets] = useState<Wallet[]>([]);
   const [loading, setLoading] = useState(true);
   const [isError, setIsError] = useState(false);
   const [totalPages, setTotalPages] = useState(0);
@@ -63,5 +64,5 @@ export default function Wallet({
     fetchWallets();
   }, [currentPage, limit, sortBy, debouncedSearchQuery, sortBy]);
 
-  return { wallets, loading, isError, totalPages };
+  return { wallets, loading, isError, totalPages,setWallets };
 }

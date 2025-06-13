@@ -77,12 +77,12 @@ const UserTable: React.FC<Props> = ({ data, headings, setData }) => {
     <div className="flex-1 rounded-lg w-full py-5">
       {/* Table */}
       <div
-        className={`rounded-lg overflow-x-auto w-full ${
+        className={`rounded-lg overflow-x-auto w-full pb-[30px] ${
           needsPadding ? "pb-28" : ""
         }`}
         ref={tableRef}
       >
-        <table className="w-full text-left min-w-[1000px]">
+        <table className="w-full text-left min-w-[800px]">
           <thead className="bg-secondary/10">
             <tr className="font-satoshi text-[12px] sm:text-[16px] whitespace-nowrap">
               <th className="p-4 sm:p-4 text-left font-[700] w-[10%]">
@@ -144,7 +144,7 @@ const UserTable: React.FC<Props> = ({ data, headings, setData }) => {
                   <td className="relative px-2 sm:px-4 py-3 sm:py-4 font-satoshi text-center">
                     <div className="dropdown-container relative">
                       <button
-                        className="absolute right-6 md:relative md:right-auto cursor-pointer "
+                        className="flex items-center justify-center w-[80%] lg:w-[100%] xl:w-[70%] 2xl:w-[50%]  cursor-pointer"
                         onClick={() => toggleDropdown(index)}
                       >
                         <Image
@@ -152,7 +152,7 @@ const UserTable: React.FC<Props> = ({ data, headings, setData }) => {
                           alt="Options"
                           width={24}
                           height={24}
-                          className="w-4 h-4 relative right-[20px] min-[1400px]:relative min-[1400px]:right-[25px]"
+                          className="w-4 h-4 "
                         />
                       </button>
 

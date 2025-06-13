@@ -163,7 +163,7 @@ const ListingsTable: React.FC<Props> = ({ data, headings }) => {
                   <td className="relative px-2 sm:px-4 py-3 sm:py-4 font-satoshi text-center">
                     <div className="dropdown-container relative">
                       <button
-                        className="absolute right-6 md:relative md:right-auto cursor-pointer"
+                        className="flex items-center justify-center w-[80%] xl:w-[70%] 2xl:w-[40%] lg:w-[100%] cursor-pointer"
                         onClick={() => toggleDropdown(index)}
                       >
                         <Image
@@ -171,7 +171,7 @@ const ListingsTable: React.FC<Props> = ({ data, headings }) => {
                           alt="Options"
                           width={24}
                           height={24}
-                          className="w-4 h-4 relative right-[20px] min-[1400px]:relative min-[1400px]:right-[25px]"
+                          className="w-4 h-4"
                         />
                       </button>
 

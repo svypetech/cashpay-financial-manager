@@ -22,7 +22,7 @@ export default function TotalUsersCard() {
   // Show error component if there's an error
   if (isError) {
     return (
-      <div className="bg-white rounded-lg shadow-sm md:p-4">
+      <div className="bg-white rounded-lg shadow-sm md:p-4 ">
         <Error text="Failed to load user data" />
       </div>
     );
@@ -90,7 +90,7 @@ export default function TotalUsersCard() {
   const xAxisLabels = generateXAxisLabels();
 
   return (
-    <div className="bg-white rounded-lg shadow-sm md:p-4">
+    <div className="bg-white rounded-lg shadow-sm p-2 md:p-4 p-2 max-[450px]:min-h-[300px]">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-lg font-semibold">Total Users</h2>
       </div>

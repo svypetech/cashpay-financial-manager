@@ -203,7 +203,7 @@ const P2PTableDisputed: React.FC<Props> = ({ data, headings, setData }) => {
                   <td className="relative px-2 md:px-4 py-3 md:py-4 font-satoshi min-w-[60px] text-center">
                     <div className="dropdown-container relative">
                       <button
-                        className="absolute right-0 md:relative md:right-auto cursor-pointer"
+                        className="flex items-center justify-center w-[80%] lg:w-[100%] xl:w-[70%] 2xl:w-[50%]  cursor-pointer"
                         onClick={() => toggleDropdown(index)}
                       >
                         <Image
@@ -232,29 +232,31 @@ const P2PTableDisputed: React.FC<Props> = ({ data, headings, setData }) => {
                               ? "Back to all Trades"
                               : "View Details"}
                           </button>
-                          <div className="border-t border-gray-100"></div>
-                          <button
-                            className={`block w-full text-left px-4 py-2 text-sm text-primary font-bold  hover:bg-gray-50 ${
-                              trade.status.toLowerCase() === "resolved"
-                                ? "opacity-50 cursor-not-allowed"
-                                : "cursor-pointer"
-                            }`}
-                            onClick={() => handleResolve("Buyer", trade)}
-                            disabled={trade.status.toLowerCase() === "resolved"}
-                          >
-                            Resolve in Favour of Buyer
-                          </button>
-                          <button
-                            className={`block w-full text-left px-4 py-2 text-sm text-primary font-bold hover:bg-gray-50 ${
-                              trade.status.toLowerCase() === "resolved"
-                                ? "opacity-50 cursor-not-allowed"
-                                : "cursor-pointer"
-                            }`}
-                            onClick={() => handleResolve("Seller", trade)}
-                            disabled={trade.status.toLowerCase() === "resolved"}
-                          >
-                            Resolve in Favour of Seller
-                          </button>
+                          {trade.status.toLowerCase() !== "resolved" && (
+                            <>
+                              <div className="border-t border-gray-100"></div>
+                              <button
+                                className={`block w-full text-left px-4 py-2 text-sm text-primary font-bold  hover:bg-gray-50 ${
+                                  trade.status.toLowerCase() === "resolved"
+                                    ? "opacity-50 cursor-not-allowed"
+                                    : "cursor-pointer"
+                                }`}
+                                onClick={() => handleResolve("Buyer", trade)}
+                              >
+                                Resolve in Favour of Buyer
+                              </button>
+                              <button
+                                className={`block w-full text-left px-4 py-2 text-sm text-primary font-bold hover:bg-gray-50 ${
+                                  trade.status.toLowerCase() === "resolved"
+                                    ? "opacity-50 cursor-not-allowed"
+                                    : "cursor-pointer"
+                                }`}
+                                onClick={() => handleResolve("Seller", trade)}
+                              >
+                                Resolve in Favour of Seller
+                              </button>
+                            </>
+                          )}
                         </div>
                       )}
                     </div>

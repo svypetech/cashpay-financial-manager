@@ -95,7 +95,7 @@ const P2PTableActive: React.FC<Props> = ({ data, headings, setData }) => {
         }`}
         ref={tableRef}
       >
-        <table className="w-full text-left  min-w-[900px] ">
+        <table className="w-full text-left  min-w-[1000px] ">
           <thead className="bg-secondary/10">
             <tr className="font-satoshi text-[12px] md:text-[16px] py-3 md:py-4 px-2 md:px-4">
               {headings.map((heading, index) => (
@@ -146,7 +146,7 @@ const P2PTableActive: React.FC<Props> = ({ data, headings, setData }) => {
                   <td className="relative px-2 md:px-4 py-3 md:py-4 font-satoshi min-w-[60px] text-center">
                     <div className="dropdown-container relative">
                       <button
-                        className="absolute relative right-auto cursor-pointer"
+                        className="flex items-center justify-center w-[80%] lg:w-[100%] xl:w-[70%] 2xl:w-[50%]  cursor-pointer"
                         onClick={() => toggleDropdown(index)}
                       >
                         <Image

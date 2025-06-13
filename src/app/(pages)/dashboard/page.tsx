@@ -11,10 +11,10 @@ export default function DashboardPage() {
   return (
     <main className="w-full sm:px-10 px-6 py-6 font-[satoshi] ">
       {/* Tabs */}
-      <div className="mb-2">
+      
         <div className="w-full bg-white rounded-lg">
           <div className="flex justify-center items-center mb-2">
-            <div className="flex w-fit">
+            <div className="flex w-fit mb-7 sm:mb-5">
               <button
                 onClick={() => setActiveTab("overview")}
                 className={`px-4 py-2 text-black ${
@@ -42,7 +42,7 @@ export default function DashboardPage() {
 
           {activeTab === "insights" && <Insights />}
         </div>
-      </div>
+      
     </main>
   );
 }

@@ -13,7 +13,7 @@ export default function ColourfulBlock({
         size === "lg"
           ? "px-[16px] py-[10px] sm:px-[24px] sm:py-[12px] sm:min-w-[120px]   h-[37px] sm:h-[45px]"
           : size === "sm"
-          ? "px-[14px] py-[6px]  sm:px-[10px] sm:py-[10px] sm:min-w-[110px]  h-[35px] md:h-[40px]"
+          ? "px-[12px] py-[6px]  sm:px-[10px] sm:py-[10px] sm:min-w-[110px]  h-[35px] md:h-[40px]"
           : ""
       } ${className} `}
     >

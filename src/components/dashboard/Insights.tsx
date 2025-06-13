@@ -11,7 +11,7 @@ export default function UserInsightsPage() {
   const { userInsights, isLoading, isError } = useFetchUserInsights();
   const {mostTradedCoins,isLoading:isLoadingCoins,isError:isCoinsError} = useFetchMostTradedCoins()
   return (
-    <main className="container mx-auto md:px-4 py-6">
+    <main className="">
       {/* Top Row - Cryptocurrencies and Transaction Frequency */}
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-6">
         <div className="lg:col-span-3">

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Pagination from "@/src/components/pagination/pagination";
 import Image from "next/image";
 import WalletTable from "@/src/components/tables/WalletTable";
-import useWallet from "@/src/hooks/useFetchWallets";
+import useFetchWallets from "@/src/hooks/useFetchWallets";
 import SkeletonTableLoader from "../skeletons/SkeletonTableLoader";
 import Error from "../ui/Error";
 import Sort from "../ui/Sort";
@@ -33,7 +33,7 @@ export default function Wallet() {
   };
   const [sortBy, setSortBy] = useState("");
 
-  let { wallets, loading, isError, totalPages } = useWallet({
+  let { wallets, setWallets, loading, isError, totalPages } = useFetchWallets({
     currentPage,
     limit: 10,
     sortBy,
@@ -64,7 +64,8 @@ export default function Wallet() {
           <Error text="No data found" />
         ) : (
           <>
-            <WalletTable headings={headings} data={wallets} />
+            <WalletTable headings={headings} data={wallets}
+            setData={setWallets} />
             <Pagination
               currentPage={currentPage}
               totalPages={totalPages}

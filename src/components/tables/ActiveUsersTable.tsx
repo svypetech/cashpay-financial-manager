@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { User } from "@/src/lib/types/User";
 import UserProfileSidebar from "../users/UserInfoSidebar";
 import { formatDate } from "@/src/utils/functions";
+import ExpandableId from "../ui/ExpandableId";
 interface Props {
   headings: string[];
   data: User[];
@@ -47,7 +48,10 @@ const ActiveUsersTable: React.FC<Props> = ({ data, headings }) => {
                   className="border-b border-gray-200 text-[12px] sm:text-[16px] cursor-pointer"
                 >
                   <td className="py-3 sm:py-5 px-3 sm:px-4 font-satoshi min-w-[100px] break-words whitespace-nowrap">
-                    {user._id}
+                   <ExpandableId 
+                      id={user._id}
+                      
+                    />
                   </td>
                   <td className="py-3 sm:py-5 px-3 sm:px-4 font-satoshi font-bold text-primary min-w-[120px] break-words whitespace-nowrap">
                     {user.name

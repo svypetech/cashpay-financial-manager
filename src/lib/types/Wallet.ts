@@ -10,6 +10,7 @@ export interface UserData {
   balances: Balances;
   totalBalanceUSD: number;
   cardUser: string;
+  userStatus: string;
 }
 
 export interface UserName {

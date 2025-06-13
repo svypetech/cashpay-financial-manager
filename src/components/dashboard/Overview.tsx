@@ -52,7 +52,7 @@ export default function Overview() {
         <TransactionsTableDashboard />
       
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8 h-full">
         <TotalUsersCard />
         <UsersTableDashboard />
       </div>

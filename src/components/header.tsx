@@ -34,7 +34,7 @@ export default function Navbar() {
   return (
     <nav className="w-full bg-white border-b border-gray-100 px-4 py-3 flex items-center justify-between">
       {/* Logo */}
-      <Link href="/" className="flex items-center">
+      <Link href="/dashboard" className="flex items-center">
         <Image
           src={darkMode ? "/images/darkModeLogo.svg" : "/images/logo.svg"}
           alt="logo"
