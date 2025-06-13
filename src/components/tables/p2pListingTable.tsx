@@ -7,7 +7,7 @@ import Image from "next/image";
 import { Listing } from "@/src/lib/types/Listing";
 import ColourfulBlock from "../ui/ColourfulBlock";
 import ExpandableId from "../ui/ExpandableId";
-import ConfirmationModal from "../ui/ConfirmModal"; // Import the confirmation modal
+import ConfirmModal from "../ui/ConfirmModal";
 import axios from "axios";
 
 interface Props {
@@ -27,29 +27,14 @@ const ListingsTable: React.FC<Props> = ({ data, headings }) => {
   const tableRef = useRef<HTMLDivElement>(null);
   const dropdownRefs = useRef<(HTMLDivElement | null)[]>([]);
 
+  // Confirmation modal states
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [targetListingId, setTargetListingId] = useState<string>("");
+
   // Add needsPadding logic
   const needsPadding =
     activeDropdown !== null &&
     (selectedIndex >= data.length - 2 || data.length <= 2);
-
-  const getColumnWidthClass = (index: number): string => {
-    switch (index) {
-      case 0:
-        return "w-[15%]"; // Listing ID
-      case 1:
-        return "w-[20%]"; // Created By
-      case 2:
-        return "w-[15%]"; // Type
-      case 3:
-        return "w-[20%]"; // Currency
-      case 4:
-        return "w-[20%]"; // Status
-      case 5:
-        return "w-[10%]"; // Actions
-      default:
-        return "w-[16.67%]"; // Equal distribution
-    }
-  };
 
   // Simple dropdown logic: close on outside click
   useEffect(() => {
@@ -73,11 +58,18 @@ const ListingsTable: React.FC<Props> = ({ data, headings }) => {
     setActiveDropdown(activeDropdown === index ? null : index);
   };
 
-  const handleDeleteListing = async (listingId: string) => {
+  const handleDeleteClick = (listing: Listing) => {
+    setTargetListingId(listing.id);
+
+    setShowConfirmModal(true);
+    setActiveDropdown(null);
+  };
+
+  const handleDeleteListing = async () => {
     try {
       setIsSubmitting(true);
       const response = await axios.delete(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/transaction/add/${listingId}`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}transaction/add/${targetListingId}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -92,8 +84,18 @@ const ListingsTable: React.FC<Props> = ({ data, headings }) => {
       }
     } catch (error) {
       console.error("Error deleting:", error);
+      alert("Error deleting listing");
     } finally {
       setIsSubmitting(false);
+      setShowConfirmModal(false);
+      setTargetListingId("");
+    }
+  };
+
+  const handleCloseModal = () => {
+    if (!isSubmitting) {
+      setShowConfirmModal(false);
+      setTargetListingId("");
     }
   };
 
@@ -101,24 +103,32 @@ const ListingsTable: React.FC<Props> = ({ data, headings }) => {
     <div className="flex-1 rounded-lg w-full py-5">
       {/* Table - Add conditional padding bottom for dropdown space */}
       <div
-        className={`rounded-lg overflow-x-auto w-full pb-[30px] ${
+        className={`rounded-lg overflow-x-auto w-full ${
           needsPadding ? "pb-28" : ""
         }`}
         ref={tableRef}
       >
-        <table className="w-full text-left table-auto">
+        <table className="w-full text-left min-w-[1000px]">
           <thead className="bg-secondary/10">
-            <tr className="whitespace-nowrap text-[12px] md:text-[16px] py-3 md:py-4 px-2 md:px-4">
-              {headings.map((heading, index) => (
-                <th
-                  key={index}
-                  className={`px-2 md:px-4 py-3 md:py-4 text-left ${getColumnWidthClass(
-                    index
-                  )}`}
-                >
-                  {heading}
-                </th>
-              ))}
+            <tr className="font-satoshi text-[12px] sm:text-[16px] whitespace-nowrap">
+              <th className="p-4 sm:p-4 text-left font-[700] w-[15%]">
+                {headings[0]}
+              </th>
+              <th className="p-4 sm:p-4 text-left font-[700] w-[20%]">
+                {headings[1]}
+              </th>
+              <th className="p-4 sm:p-4 text-left font-[700] w-[15%]">
+                {headings[2]}
+              </th>
+              <th className="p-4 sm:p-4 text-left font-[700] w-[20%]">
+                {headings[3]}
+              </th>
+              <th className="p-4 sm:p-4 text-left font-[700] w-[20%]">
+                {headings[4]}
+              </th>
+              <th className="p-4 sm:p-4 text-left font-[700] w-[10%]">
+                {headings[5]}
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -126,21 +136,21 @@ const ListingsTable: React.FC<Props> = ({ data, headings }) => {
               data.map((listing, index) => (
                 <tr
                   key={listing.id}
-                  className="border-b border-gray-200 text-[12px] md:text-[16px] font-[satoshi]"
+                  className="border-b border-gray-200 text-[12px] sm:text-[16px]"
                 >
-                  <td className="px-2 md:px-4 py-3 md:py-4 whitespace-nowrap min-w-[100px]">
+                  <td className="px-2 sm:px-4 py-3 sm:py-4 font-satoshi whitespace-nowrap">
                     <ExpandableId id={listing.id} />
                   </td>
-                  <td className="px-2 md:px-4 py-3 md:py-4 whitespace-nowrap min-w-[120px] break-words">
+                  <td className="px-2 sm:px-4 py-3 sm:py-4 font-satoshi whitespace-nowrap">
                     <ExpandableId id={listing.createdBy} />
                   </td>
-                  <td className="px-2 md:px-4 py-3 md:py-4 whitespace-nowrap min-w-[150px] break-words">
+                  <td className="px-2 sm:px-4 py-3 sm:py-4 font-satoshi whitespace-nowrap">
                     {listing.type}
                   </td>
-                  <td className="px-2 md:px-4 py-3 md:py-4 whitespace-nowrap min-w-[150px] break-words">
+                  <td className="px-2 sm:px-4 py-3 sm:py-4 font-satoshi whitespace-nowrap">
                     {listing.currency}
                   </td>
-                  <td className="px-2 md:px-4 py-3 md:py-4 whitespace-nowrap min-w-[120px]">
+                  <td className="px-2 sm:px-4 py-3 sm:py-4 font-satoshi whitespace-nowrap">
                     <ColourfulBlock
                       text={listing.addVisibility ? "Active" : "Inactive"}
                       className={
@@ -150,10 +160,10 @@ const ListingsTable: React.FC<Props> = ({ data, headings }) => {
                       }
                     />
                   </td>
-                  <td className="relative p-2 md:p-4 font-satoshi min-w-[60px] text-center">
-                    <div className="dropdown-container relative inline-block">
+                  <td className="relative px-2 sm:px-4 py-3 sm:py-4 font-satoshi text-center">
+                    <div className="dropdown-container relative">
                       <button
-                        className="relative cursor-pointer"
+                        className="absolute right-6 md:relative md:right-auto cursor-pointer"
                         onClick={() => toggleDropdown(index)}
                       >
                         <Image
@@ -161,13 +171,13 @@ const ListingsTable: React.FC<Props> = ({ data, headings }) => {
                           alt="Options"
                           width={24}
                           height={24}
-                          className="w-4 h-4"
+                          className="w-4 h-4 relative right-[20px] min-[1400px]:relative min-[1400px]:right-[25px]"
                         />
                       </button>
 
                       {activeDropdown === index && (
                         <div
-                          className="absolute z-10 right-0 top-full mt-2 w-40 bg-white rounded-md shadow-lg py-1 border border-gray-100"
+                          className="absolute z-10 right-0 w-40 bg-white rounded-md shadow-lg py-1 border border-gray-100"
                           ref={(el) => {
                             dropdownRefs.current[index] = el;
                           }}
@@ -185,12 +195,9 @@ const ListingsTable: React.FC<Props> = ({ data, headings }) => {
                           <div className="border-t border-gray-100"></div>
                           <button
                             className="block w-full text-left px-4 py-2 text-sm text-red-500 font-bold cursor-pointer hover:bg-gray-50"
-                            onClick={() => {
-                              handleDeleteListing(listing.id);
-                              setActiveDropdown(null);
-                            }}
+                            onClick={() => handleDeleteClick(listing)}
                           >
-                            {isSubmitting ? "Deleting..." : "Delete Listing"}
+                            Delete Listing
                           </button>
                         </div>
                       )}
@@ -206,6 +213,20 @@ const ListingsTable: React.FC<Props> = ({ data, headings }) => {
         showPopup={showPopup}
         onClose={() => setShowPopup(false)}
         listing={selectedListing}
+      />
+
+      {/* Confirmation Modal */}
+      <ConfirmModal
+        isOpen={showConfirmModal}
+        onClose={handleCloseModal}
+        onConfirm={handleDeleteListing}
+        title="Delete Listing"
+        message={<span>Are you sure you want to delete this listing?</span>}
+        warningText="This action cannot be undone. The listing will be permanently removed."
+        cancelText="Cancel"
+        confirmText="Delete Listing"
+        isLoading={isSubmitting}
+        style="red"
       />
     </div>
   );

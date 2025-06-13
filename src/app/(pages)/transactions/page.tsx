@@ -24,7 +24,7 @@ export default function DashboardPage() {
     <main className="w-full sm:px-10 px-6 py-6 font-[satoshi]">
       {/* Tabs */}
       <div className="flex justify-center mb-2">
-        <div className="w-full bg-white rounded-lg p-6">
+        <div className="w-full bg-white rounded-lg">
           <div className="flex justify-center items-center mb-4">
             <Tabs 
             tabs={tabs}

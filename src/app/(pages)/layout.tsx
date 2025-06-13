@@ -23,7 +23,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
       {loading ? ( // a div with centered loader on the screen
         //
         <div className="flex items-center justify-center h-screen">
-          <Loader2 className="animate-spin h-12 w-12 text-primary" />
+          <Loader2 className="animate-spin h-8 w-8 text-primary" />
         </div>
       ) : (
         <ClientLayout>{children}</ClientLayout>

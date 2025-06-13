@@ -4,7 +4,7 @@ import Image from "next/image";
 import type React from "react";
 import { useEffect, useState, useRef } from "react";
 import TradeDetailsPopup from "../p2pTrading/TradeDetailsPopup";
-import { shortenAddress } from "@/src/utils/functions";
+
 import { Trade } from "@/src/lib/types/Trades";
 import ColourfulBlock from "../ui/ColourfulBlock";
 import axios from "axios";
@@ -130,13 +130,13 @@ const P2PTableActive: React.FC<Props> = ({ data, headings, setData }) => {
                   <td className="px-2 sm:px-4 py-3 sm:py-4 font-satoshi">
                     <ColourfulBlock
                       text={trade.payment}
-                      className={`text-center rounded-xl md:text-md font-semibold bg-[#71FB5533] text-[#20C000] sm:min-w-[140px]`}
+                      className={`text-center md:text-md font-semibold bg-[#71FB5533] text-[#20C000] sm:min-w-[150px] min-w-[105px] `}
                     />
                   </td>
                   <td className="px-2 sm:px-4 py-3 sm:py-4 font-satoshi">
                     <ColourfulBlock
                       text={trade.status}
-                      className={`text-center rounded-xl md:text-md font-semibold ${
+                      className={`text-center md:text-md font-semibold ${
                         trade.status.toLowerCase() === "canceled"
                           ? "bg-fail/20 text-fail"
                           : "text-[#727272] bg-[#72727233]"

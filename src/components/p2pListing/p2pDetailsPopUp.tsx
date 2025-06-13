@@ -155,7 +155,7 @@ export default function ListingDetailsPopup({
                   <span className="w-28 text-sm font-bold bg-[#27AAE11A] px-4 py-1 ">
                     Status
                   </span>
-                  <span className={`text-sm  font-semibold`}>
+                  <span className={`text-sm  ${listing.addVisibility ? "text-success": "text-fail"}`}>
                     {listing.addVisibility ? "Active" : "Inactive"}
                   </span>
                 </div>
