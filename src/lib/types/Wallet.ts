@@ -11,6 +11,7 @@ export interface UserData {
   totalBalanceUSD: number;
   cardUser: string;
   userStatus: string;
+  user_id: string;
 }
 
 export interface UserName {

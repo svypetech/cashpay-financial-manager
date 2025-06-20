@@ -1,12 +1,10 @@
 import StatCard from "../cards/StatsCard";
 import TotalUsersCard from "../cards/TotalUsers";
-import SystemHealthGauge from "../cards/SystemHealth";
 import TransactionsTableDashboard from "../cards/TransactionsTableDashboard";
 import UsersTableDashboard from "../cards/UsersTableDashboard";
 import useFetchDashboardCards from "@/src/hooks/dashboard/useFetchDashboardCards";
 import Error from "../ui/Error";
-import useFetchSystemHealth from "@/src/hooks/dashboard/useFetchSystemHealth";
-import SystemHealthSkeleton from "../skeletons/SystemHealthSkeleton";
+
 
 export default function Overview() {
   const { dashboardCards, isLoading, isError } = useFetchDashboardCards();

@@ -9,6 +9,7 @@ import axios from "axios";
 import { formatNumberToTwoDecimals } from "@/src/utils/functions";
 import ConfirmModal from "../ui/ConfirmModal";
 import ExpandableId from "../ui/ExpandableId";
+import SuspendUserModal from "../ui/SuspendModal";
 
 interface Props {
   headings: string[];
@@ -24,6 +25,8 @@ const WalletTable: React.FC<Props> = ({ data, headings, setData }) => {
   const [modalAction, setModalAction] = useState<
     "ban" | "suspend" | "activate" | null
   >(null);
+  const [showSuspendModal, setShowSuspendModal] = useState(false);
+  
 
   const [targetUserId, setTargetUserId] = useState<string>("");
   const [targetUserName, setTargetUserName] = useState<string>("");
@@ -52,7 +55,7 @@ const WalletTable: React.FC<Props> = ({ data, headings, setData }) => {
       alert("User banned successfully");
       setData((prevData) =>
         prevData.map((wallet) =>
-          wallet.data.userId === userId
+          wallet.data.user_id === userId
             ? {
                 ...wallet,
                 data: {
@@ -72,13 +75,14 @@ const WalletTable: React.FC<Props> = ({ data, headings, setData }) => {
     }
   };
 
-  const suspendUser = async (userId: string) => {
+  const suspendUser = async (userId: string, days: number) => {
     setIsLoading(true);
     try {
       await axios.put(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}user/suspendUser/`,
         {
           id: userId,
+          days: days,
         },
         {
           headers: {
@@ -89,12 +93,12 @@ const WalletTable: React.FC<Props> = ({ data, headings, setData }) => {
       alert("User suspended successfully");
       setData((prevData) =>
         prevData.map((wallet) =>
-          wallet.data.userId === userId
+          wallet.data.user_id === userId
             ? {
                 ...wallet,
                 data: {
                   ...wallet.data,
-                  userStatus: "Suspended",
+                  userStatus: "Suspend",
                 },
               }
             : wallet
@@ -126,7 +130,7 @@ const WalletTable: React.FC<Props> = ({ data, headings, setData }) => {
       alert("User activated successfully");
       setData((prevData) =>
         prevData.map((wallet) =>
-          wallet.data.userId === userId
+          wallet.data.user_id === userId
             ? {
                 ...wallet,
                 data: {
@@ -151,7 +155,7 @@ const WalletTable: React.FC<Props> = ({ data, headings, setData }) => {
       ? `${wallet.data.userName.firstName} ${wallet.data.userName.lastName}`
       : "N/A";
 
-    setTargetUserId(wallet.data.userId);
+    setTargetUserId(wallet.data.user_id);
     setTargetUserName(userName);
     setModalAction("ban");
     setShowConfirmModal(true);
@@ -163,10 +167,10 @@ const WalletTable: React.FC<Props> = ({ data, headings, setData }) => {
       ? `${wallet.data.userName.firstName} ${wallet.data.userName.lastName}`
       : "N/A";
 
-    setTargetUserId(wallet.data.userId);
+    setTargetUserId(wallet.data.user_id);
     setTargetUserName(userName);
     setModalAction("suspend");
-    setShowConfirmModal(true);
+    setShowSuspendModal(true);
     setActiveDropdown(null);
   };
 
@@ -175,18 +179,18 @@ const WalletTable: React.FC<Props> = ({ data, headings, setData }) => {
       ? `${wallet.data.userName.firstName} ${wallet.data.userName.lastName}`
       : "N/A";
 
-    setTargetUserId(wallet.data.userId);
+    setTargetUserId(wallet.data.user_id);
     setTargetUserName(userName);
     setModalAction("activate");
     setShowConfirmModal(true);
     setActiveDropdown(null);
   };
 
-  const handleConfirmAction = () => {
+  const handleConfirmAction = (days?: number) => {
     if (modalAction === "ban") {
       banUser(targetUserId);
-    } else if (modalAction === "suspend") {
-      suspendUser(targetUserId);
+    } else if (modalAction === "suspend" && days) {
+      suspendUser(targetUserId, days);
     } else if (modalAction === "activate") {
       activateUser(targetUserId);
     }
@@ -204,7 +208,7 @@ const WalletTable: React.FC<Props> = ({ data, headings, setData }) => {
   // Check if user is banned or suspended
   const isUserInactive = (wallet: Wallet): boolean => {
     const userStatus = wallet.data.userStatus?.toLowerCase();
-    return userStatus === "banned" || userStatus === "suspended";
+    return userStatus === "banned" || userStatus === "suspend";
   };
 
   const getModalConfig = () => {
@@ -280,7 +284,7 @@ const WalletTable: React.FC<Props> = ({ data, headings, setData }) => {
         }`}
         ref={tableRef}
       >
-        <table className="w-full text-left min-w-[1000px]">
+        <table className="w-full text-left min-w-[800px]">
           <thead className="bg-secondary/10">
             <tr className="font-satoshi text-[12px] sm:text-[16px] whitespace-nowrap">
               <th className="px-2 sm:px-4 py-3 sm:py-4 text-left font-[700] w-[15%]">
@@ -311,7 +315,7 @@ const WalletTable: React.FC<Props> = ({ data, headings, setData }) => {
                   className="border-b border-gray-200 text-[12px] sm:text-[16px]"
                 >
                   <td className="px-2 sm:px-4 py-3 sm:py-4 font-satoshi whitespace-nowrap">
-                    {wallet.data.userId}
+                    <ExpandableId id={wallet.data.user_id} />
                   </td>
                   <td className="px-2 sm:px-4 py-3 sm:py-4 font-satoshi font-bold text-primary whitespace-nowrap">
                     {wallet.data.userName
@@ -420,6 +424,15 @@ const WalletTable: React.FC<Props> = ({ data, headings, setData }) => {
         confirmText={modalConfig.confirmText}
         isLoading={isLoading}
         style={modalConfig.style}
+      />
+      <SuspendUserModal
+        isOpen={showSuspendModal}
+        onClose={() => setShowSuspendModal(false)}
+        userName={targetUserName ? targetUserName : "N/A"}
+        onConfirm={(days) => {
+          handleConfirmAction(days);
+        }}
+        isLoading={isLoading}
       />
     </div>
   );

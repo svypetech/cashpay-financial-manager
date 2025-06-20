@@ -108,7 +108,7 @@ const ListingsTable: React.FC<Props> = ({ data, headings }) => {
         }`}
         ref={tableRef}
       >
-        <table className="w-full text-left min-w-[1000px]">
+        <table className="w-full text-left min-w-[800px]">
           <thead className="bg-secondary/10">
             <tr className="font-satoshi text-[12px] sm:text-[16px] whitespace-nowrap">
               <th className="p-4 sm:p-4 text-left font-[700] w-[15%]">

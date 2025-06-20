@@ -55,7 +55,7 @@ const TransactionTable: React.FC<Props> = ({ data, headings }) => {
     <div className="flex-1 rounded-lg w-full py-5   ">
       {/* Table */}
       <div className="rounded-lg overflow-x-auto w-full pb-[40px]" ref={tableRef}>
-        <table className="w-full text-left overflow-x-auto min-w-[600px]">
+        <table className="w-full text-left  min-w-[1000px]">
           <thead className="bg-secondary/10">
             <tr className="font-satoshi text-[12px] md:text-[16px] py-3 md:py-4 px-2 md:px-4">
               {headings.map((heading, index) => (

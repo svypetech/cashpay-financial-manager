@@ -16,7 +16,7 @@ const ActiveUsersTable: React.FC<Props> = ({ data, headings }) => {
     <div className="flex-1 rounded-lg w-full py-5">
       {/* Table */}
       <div className="rounded-lg overflow-x-auto w-full min-h-[200px]">
-        <table className="w-full text-left table-auto min-w-[800px]">
+        <table className="w-full text-left table-auto min-w-[600px]">
           <thead className="bg-secondary/10">
             <tr className="font-satoshi text-[12px] sm:text-[16px] whitespace-nowrap text-left py-3 sm:py-5 px-3 sm:px-4">
               <th className="px-3 sm:px-4 py-3 sm:py-5 text-left w-[15%]">
