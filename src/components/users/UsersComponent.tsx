@@ -9,20 +9,12 @@ import Sort from "../ui/Sort";
 import useFetchUsers from "@/src/hooks/useFetchUsers";
 import SkeletonTableLoader from "../skeletons/SkeletonTableLoader";
 import Error from "../ui/Error";
-const headings = [
-  "User ID",
-  "Name",
-  "E-mail",
-  "Joined date",
-  "Status",
-  "Actions",
-];
+const headings = ["User ID", "Name", "E-mail", "Joined date", "Actions"];
 
 // Sort options
 const sortOptions = [
   { label: "None", value: "" },
   { label: "Date", value: "date" },
-  { label: "Status", value: "userStatus" },
   { label: "Title", value: "title" },
 ];
 
@@ -34,13 +26,13 @@ export default function UsersComponent() {
   const [sortBy, setSortBy] = useState("");
   const [filterStatus, setFilterStatus] = useState("");
 
-  const {
-    users,
-    totalPages,
-    isLoading,
-    isError,
-    setUsers,
-  } = useFetchUsers({ currentPage, limit: 10, sortBy, filterStatus,searchQuery });
+  const { users, totalPages, isLoading, isError, setUsers } = useFetchUsers({
+    currentPage,
+    limit: 10,
+    sortBy,
+    filterStatus,
+    searchQuery,
+  });
 
   // Define tabs for the Tabs component
   const tabs = ["All", "Verified", "Pending Verifications"];
@@ -97,11 +89,7 @@ export default function UsersComponent() {
         <Error text="No data found" />
       ) : (
         <div className="mt-4">
-          <UserTable
-            headings={headings}
-            data={users}
-            setData={setUsers}
-          />
+          <UserTable headings={headings} data={users} setData={setUsers} />
           <Pagination
             currentPage={currentPage}
             totalPages={totalPages}

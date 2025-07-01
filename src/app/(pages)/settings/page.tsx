@@ -170,19 +170,26 @@ export default function SettingsPage() {
     setIsSubmitting(true);
     try {
       const user = localStorage.getItem("user");
+      const token = localStorage.getItem("token")
       if (!user) {
         throw new Error("User information not found");
       }
 
-      await axios.delete(`${process.env.NEXT_PUBLIC_BACKEND_URL}/admin`, {
-        headers: {
-          Authorization: `Bearer ${JSON.parse(user).token}`,
-        },
-      });
+      await axios.delete(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}admin/deleteAdmin`,
+        {
+          data: {
+            id: JSON.parse(user)._id,
+          },
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       localStorage.removeItem("user");
       localStorage.removeItem("token");
       setShowDeleteDialog(false);
-      window.location.href = "/login";
+      window.location.href = "/signin";
     } catch (error) {
       alert("Failed to delete account");
     } finally {
@@ -363,9 +370,6 @@ export default function SettingsPage() {
             </div>
             <ChevronRight className="h-5 w-5 text-gray-400 group-hover:text-gray-600" />
           </Link>
-
-          
-         
 
           {/* Delete Account button */}
           <button

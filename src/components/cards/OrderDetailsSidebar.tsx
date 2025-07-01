@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import Image from "next/image"
 import { X } from "lucide-react"
-import VerificationAccordion from "../cards/VerificationForm"
+// import VerificationAccordion from "@/src/components/cards/VerificationAccordion"
 
 interface SidebarProps {
     showSidebar: boolean
@@ -104,7 +104,7 @@ export default function OrderDetailsSidebar({
                                     <h4 className="text-2xl font-semibold">KYC Verification</h4>
                                     <span className="rounded-xl font-bold px-4 py-2 text-[#727272] bg-[#72727233]">Pending</span>
                                 </div>
-                                <VerificationAccordion />
+                                {/* <VerificationAccordion /> */}
                             </div>
                         </div>
                         <div className="px-16">

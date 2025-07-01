@@ -89,7 +89,8 @@ export default function Navbar() {
                 <button
                   onClick={() => {
                     setIsMenuOpen(!isMenuOpen);
-                    localStorage.removeItem("userInfo");
+                    localStorage.removeItem("user");
+                    localStorage.removeItem("token");
                     router.push("/signin");
                   }}
                   className="px-2 block text-sm text-[#DF1D1D] font-bold curpsor-pointer"

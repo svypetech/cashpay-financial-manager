@@ -5,18 +5,22 @@ import type React from "react";
 import { useEffect, useState, useRef } from "react";
 import DisputeDetailsCard from "../p2pTrading/DisputeDetailsCard";
 import DisputeResolutionPopup from "../p2pTrading/ResolveDisputePopup";
+import ChatSidebar from "../chat/ChatSidebar";
+import useFetchChat from "@/src/hooks/chat/useFetchChat";
 import { Trade } from "@/src/lib/types/Trades";
+import { ChatUser } from "@/src/lib/types/chat";
 import ExpandableId from "../ui/ExpandableId";
 import ColourfulBlock from "../ui/ColourfulBlock";
 import axios from "axios";
 import { shortenAddress } from "@/src/utils/functions";
-
 import DisputeSkeletonCard from "../skeletons/DisputeSkeletonCard";
+
 interface Props {
   headings: string[];
   data: Trade[];
   setData: React.Dispatch<React.SetStateAction<Trade[]>>;
 }
+
 interface SellerBuyer {
   name: {
     firstName: string;
@@ -39,6 +43,10 @@ const P2PTableDisputed: React.FC<Props> = ({ data, headings, setData }) => {
   const [showDetails, setShowDetails] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Chat sidebar states
+  const [showChatSidebar, setShowChatSidebar] = useState(false);
+  const [selectedChatId, setSelectedChatId] = useState<string>("");
+
   const [isFetchingSeller, setIsFetchingSeller] = useState(false);
   const [sellerAndBuyerDetails, setSellerAndBuyerDetails] = useState({
     seller: {} as SellerBuyer,
@@ -51,6 +59,20 @@ const P2PTableDisputed: React.FC<Props> = ({ data, headings, setData }) => {
     (selectedIndex >= data.length - 2 || data.length <= 2);
   const tableRef = useRef<HTMLDivElement>(null);
   const dropdownRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+  // Use the chat hook
+  const {
+    messages,
+    isLoading: isChatLoading,
+    isLoadingMore,
+    isError: chatError,
+    currentChatUser,
+    loadMoreMessages,
+    hasMore,
+  } = useFetchChat({
+    chatId: selectedChatId,
+    setChatSidebarOpen: setShowChatSidebar,
+  });
 
   const getSellerAndBuyerDetails = async (trade: Trade) => {
     if (!trade) return;
@@ -74,6 +96,20 @@ const P2PTableDisputed: React.FC<Props> = ({ data, headings, setData }) => {
       setIsFetchingSeller(false);
     }
   };
+
+  // Handle chat link click
+  const handleChatClick = (trade: Trade) => {
+    setSelectedChatId(trade.tradeId); // This will trigger the useFetchChat hook
+  };
+
+  // Handle chat sidebar close
+  const handleCloseChatSidebar = () => {
+    setShowChatSidebar(false);
+    setSelectedChatId(""); // Clear the chat ID
+  };
+
+  // Create default chat user if no user data is available
+
   const handleView = (trade: Trade) => {
     if (selectedTrade) {
       setSelectedTrade(null);
@@ -95,7 +131,6 @@ const P2PTableDisputed: React.FC<Props> = ({ data, headings, setData }) => {
   const handleSubmit = async (comments: string) => {
     setIsSubmitting(true);
 
-    // Simulate a network request
     try {
       let response = await axios.put(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}transaction/order/resolveDispute`,
@@ -111,7 +146,6 @@ const P2PTableDisputed: React.FC<Props> = ({ data, headings, setData }) => {
         }
       );
       alert("Dispute resolved successfully: " + JSON.stringify(response.data));
-      // Update the trade status in the local state
       setData((prevTrades) =>
         prevTrades.map((trade) =>
           trade.tradeId === selectedTrade?.tradeId
@@ -128,11 +162,11 @@ const P2PTableDisputed: React.FC<Props> = ({ data, headings, setData }) => {
   };
 
   const toggleDropdown = (index: number) => {
-    setSelectedIndex(index); // Set selected index first
+    setSelectedIndex(index);
     setActiveDropdown(activeDropdown === index ? null : index);
   };
+
   useEffect(() => {
-    // Close dropdown when clicking outside
     const handleClickOutside = (event: MouseEvent) => {
       if (activeDropdown !== null) {
         const target = event.target as HTMLElement;
@@ -196,9 +230,12 @@ const P2PTableDisputed: React.FC<Props> = ({ data, headings, setData }) => {
                     />
                   </td>
                   <td className="px-2 md:px-4 py-3 md:py-4 font-satoshi min-w-[100px]">
-                    <span className="text-[12px] md:text-[16px] px-4 py-2 text-primary underline decoration-primary cursor-pointer">
+                    <button
+                      onClick={() => handleChatClick(trade)}
+                      className="text-[12px] md:text-[16px] px-4 py-2 text-primary underline decoration-primary cursor-pointer hover:text-primary/80 transition-colors"
+                    >
                       {`chat.cashpay/${shortenAddress(trade.tradeId)}`}
-                    </span>
+                    </button>
                   </td>
                   <td className="relative px-2 md:px-4 py-3 md:py-4 font-satoshi min-w-[60px] text-center">
                     <div className="dropdown-container relative">
@@ -217,13 +254,13 @@ const P2PTableDisputed: React.FC<Props> = ({ data, headings, setData }) => {
 
                       {activeDropdown === index && (
                         <div
-                          className="absolute z-10 right-0 w-56 bg-white rounded-md shadow-lg py-1 border border-gray-100"
+                          className="absolute z-10 right-0 w-45 bg-white rounded-md shadow-lg py-1 border border-gray-100"
                           ref={(el) => {
                             dropdownRefs.current[index] = el;
                           }}
                         >
                           <button
-                            className="block w-full text-left px-4 py-2 text-sm text-primary font-bold cursor-pointer hover:bg-gray-50"
+                            className="block w-full text-left px-3 py-2 text-sm text-primary font-bold cursor-pointer hover:bg-gray-50"
                             onClick={() => handleView(trade)}
                           >
                             {showDetails &&
@@ -309,6 +346,20 @@ const P2PTableDisputed: React.FC<Props> = ({ data, headings, setData }) => {
           isLoading={isSubmitting}
         />
       )}
+
+      {/* Chat Sidebar */}
+      <ChatSidebar
+        isOpen={showChatSidebar}
+        onClose={handleCloseChatSidebar}
+        chatId={selectedChatId}
+        user={currentChatUser}
+        initialMessages={messages}
+        isLoading={isChatLoading}
+        isError={chatError}
+        loadMoreMessages={loadMoreMessages}
+        isLoadingMore={isLoadingMore}
+        hasMore={hasMore}
+      />
     </div>
   );
 };

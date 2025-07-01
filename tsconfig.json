@@ -28,6 +28,6 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "tailwind.config.ts"
-  ],
+, "src/components/cards/VerificationAccordion.tsx"  ],
   "exclude": ["node_modules"]
 }
