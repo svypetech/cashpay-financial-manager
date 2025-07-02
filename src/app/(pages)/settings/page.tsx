@@ -170,7 +170,7 @@ export default function SettingsPage() {
     setIsSubmitting(true);
     try {
       const user = localStorage.getItem("user");
-      const token = localStorage.getItem("token")
+      const token = localStorage.getItem("token");
       if (!user) {
         throw new Error("User information not found");
       }
@@ -198,7 +198,7 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="container mx-auto px-10 py-8 font-[satoshi]">
+    <div className="px-6 sm:px-10 py-8 font-[satoshi]">
       <div
         className={`flex ${
           isEditing ? "flex-col" : ""
@@ -207,7 +207,7 @@ export default function SettingsPage() {
         <h1 className="text-2xl font-bold mb-2 sm:mb-0">Settings</h1>
 
         {isEditing ? (
-          <div className="flex flex-row items-center gap-2">
+          <div className="flex flex-row items-center gap-2 mt-5 sm:mt-0">
             <button
               type="button"
               onClick={handleDiscard}
@@ -228,7 +228,7 @@ export default function SettingsPage() {
           <button
             type="button"
             onClick={() => setIsEditing(true)}
-            className="cursor-pointer px-4 py-1.5 border font-semibold border-primary rounded-md text-primary hover:bg-blue-50 text-sm sm:text-base"
+            className="cursor-pointer px-6 py-1.5 border font-semibold border-primary rounded-md text-primary hover:bg-blue-50 text-sm sm:text-base"
           >
             Edit
           </button>
@@ -242,13 +242,13 @@ export default function SettingsPage() {
         {/* Account Information section */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           {/* Account Information - 1 column */}
-          <div className="mx-10 md:mx-0 md:col-span-1">
+          <div className="md:col-span-1">
             <h2 className="text-lg font-semibold mb-1">Account Information</h2>
             <p className="text-gray-500 text-sm">Set your account details</p>
           </div>
 
           {/* Profile Photo and Input Fields - 3 columns */}
-          <div className="md:col-span-3 mx-10">
+          <div className="md:col-span-3 mx-0 md:mx-10">
             <div className="flex flex-col gap-6">
               {/* Profile Photo - 1 column within the 3 columns */}
               <div className="md:col-span-1">
@@ -354,7 +354,7 @@ export default function SettingsPage() {
         <div className="mt-8 space-y-4 pt-6">
           <Link
             href={"/change-password"}
-            className="w-full cursor-pointer border-b border-gray-300 flex items-center justify-between py-3 px-1 text-left group"
+            className="w-full cursor-pointer border-b border-gray-300 flex items-center justify-between py-3 px-1 text-left group hover:bg-gray-50"
           >
             <div className="flex items-center">
               <div className="mr-3 text-gray-400">

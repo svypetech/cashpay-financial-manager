@@ -1,7 +1,7 @@
 "use client";
 
-import Header from "../header";
-import Footer from "../Footer";
+import Header from "./header";
+import Footer from "./Footer";
 import { DarkModeProvider, useDarkMode } from "../../app/context/DarkModeContext";
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {

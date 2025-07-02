@@ -2,16 +2,15 @@
 
 import { useState, useEffect } from "react";
 import Pagination from "../pagination/pagination";
-import useFetchUsers from "@/src/hooks/useFetchUsers";
 import UserEngagementTable from "../tables/UserEngagementTable";
 import SkeletonTableLoader from "../skeletons/SkeletonTableLoader";
 import Search from "../ui/Search";
 import Image from "next/image";
-import { User } from "@/src/lib/types/User";
 import Error from "../ui/Error";
-import { useDownloadData } from "@/src/hooks/useDownloadData";
 import { useDateRangeFilter } from "@/src/hooks/useSetDate";
-import { DateRangePicker } from "@/src/components/ui/DateSelector";
+import useFetchUsers from "@/src/hooks/useFetchUsers";
+import { useDownloadData } from "@/src/hooks/useDownloadData";
+import DateRangePicker from "../ui/DateSelector";
 
 const headings = [
   "User ID",
@@ -24,14 +23,12 @@ const headings = [
 export default function UserEngagement() {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
-
   const { startDate, endDate, handleDateChange } = useDateRangeFilter();
   const { users, isLoading, isError, totalPages } = useFetchUsers({
-    currentPage,
+    currentPage: currentPage,
     limit: 10,
-    filterStatus: "",
     startDate,
-    endDate, // Assuming we want to filter active users
+    endDate,
     searchQuery,
   });
 
@@ -40,8 +37,6 @@ export default function UserEngagement() {
     filename: "user_engagement",
     dateInFilename: true,
   });
-
-  // Use the date range filter hook
 
   // Define CSV field mapping for User Engagement
   const csvFields = [
@@ -119,13 +114,13 @@ export default function UserEngagement() {
     <div>
       {/* Search and Filter Section */}
       <div className="flex flex-col md:flex-row items-center mb-4 gap-4 w-full mt-6">
-        {/* Search Bar - 70% */}
-        <div className="md:w-[60%] w-full">
+        {/* Search Bar - 60% */}
+        <div className="md:w-[50%] w-full">
           <Search className="w-full" onSearch={handleSearch} />
         </div>
 
-        {/* Filter - 15% */}
-        <div className="flex flex-col sm:flex-row gap-4 md:w-[40%] w-full">
+        {/* Filter and Download - 40% */}
+        <div className="flex flex-col sm:flex-row gap-4 md:w-[50%] w-full">
           <div className="sm:w-[50%] w-full">
             <DateRangePicker
               startDate={startDate}
@@ -135,8 +130,7 @@ export default function UserEngagement() {
             />
           </div>
 
-          {/* Download - 15% */}
-
+          {/* Download - 50% */}
           <div className="sm:w-[50%] w-full">
             <button
               onClick={handleDownload}

@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AuthenticateUser } from "@/src/utils/functions";
 import { Loader2 } from "lucide-react";
+import { ToastProvider } from "@/src/providers/ToastProvider";
 const Layout = ({ children }: { children: ReactNode }) => {
   const [loading, isLoading] = useState(true);
   const router = useRouter();
@@ -26,7 +27,9 @@ const Layout = ({ children }: { children: ReactNode }) => {
           <Loader2 className="animate-spin h-8 w-8 text-primary" />
         </div>
       ) : (
-        <ClientLayout>{children}</ClientLayout>
+        <ToastProvider>
+          <ClientLayout>{children}</ClientLayout>
+        </ToastProvider>
       )}
     </>
   );

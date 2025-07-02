@@ -40,13 +40,9 @@ export default function useFetchChat({
         );
 
         const chatMessages = response.data.data || [];
-        
 
         setMessages(chatMessages);
-        setCurrentChatUser({userName: {
-            firstName: "N",
-            lastName: "/A",
-        }, userImage: "/placeholder.png"});
+        setCurrentChatUser(response.data.userDetails);
         setHasMore(chatMessages.length >= 20); // Has more if we got full page
         setIsError(null);
       } catch (error: any) {

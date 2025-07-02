@@ -3,14 +3,14 @@
 import { useState, useEffect } from "react";
 import Pagination from "../pagination/pagination";
 import TransactionFrequencyTable from "../tables/TransactionFrequencyTable";
-import useFetchTransactions from "@/src/hooks/useFetchTransactions";
 import SkeletonTableLoader from "../skeletons/SkeletonTableLoader";
 import Image from "next/image";
 import Search from "../ui/Search";
 import Error from "../ui/Error";
+import { useDateRangeFilter } from "@/src/hooks//useSetDate";
+import useFetchTransactions from "@/src/hooks/useFetchTransactions";
 import { useDownloadData } from "@/src/hooks/useDownloadData";
-import { useDateRangeFilter } from "@/src/hooks/useSetDate";
-import { DateRangePicker } from "@/src/components/ui/DateSelector";
+import DateRangePicker from "../ui/DateSelector";
 
 const headings = [
   "Transaction ID",
@@ -21,31 +21,6 @@ const headings = [
   "Timestamp",
 ];
 
-const csvFields = [
-  { key: "id", label: "Transaction ID" },
-  { key: "userId", label: "User ID" },
-  { key: "tokenName", label: "Currency" },
-  { key: "amount", label: "Amount" },
-  {
-    key: "status",
-    label: "Status",
-    transform: (value: string) => value?.toLowerCase() || "N/A",
-  },
-  {
-    key: "date",
-    label: "Timestamp",
-    transform: (value: string) => {
-      try {
-        return value ? new Date(value).toLocaleString() : "N/A";
-      } catch {
-        return "Invalid Date";
-      }
-    },
-  },
-];
-
-
-
 export default function TransactionFrequencyPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
@@ -55,7 +30,7 @@ export default function TransactionFrequencyPage() {
     {
       currentPage,
       limit: 10,
-      searchQuery,
+      searchQuery: searchQuery,
       startDate,
       endDate,
     }
@@ -63,13 +38,42 @@ export default function TransactionFrequencyPage() {
 
   // Use the CSV download hook
   const { downloadData, isDownloading } = useDownloadData({
-    filename: "transactions",
+    filename: "transaction_frequency",
     dateInFilename: true,
   });
 
-  // Use the date range filter hook
-
   // Define CSV field mapping
+  const csvFields = [
+    { key: "id", label: "Transaction ID" },
+    { key: "userId", label: "User ID" },
+    { key: "tokenName", label: "Currency" },
+    {
+      key: "amount",
+      label: "Amount",
+      transform: (value: any) => {
+        if (typeof value === "number") {
+          return value.toFixed(2);
+        }
+        return value || "0.00";
+      },
+    },
+    {
+      key: "status",
+      label: "Status",
+      transform: (value: string) => value?.toLowerCase() || "N/A",
+    },
+    {
+      key: "date",
+      label: "Timestamp",
+      transform: (value: string) => {
+        try {
+          return value ? new Date(value).toLocaleString() : "N/A";
+        } catch {
+          return "Invalid Date";
+        }
+      },
+    },
+  ];
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -81,7 +85,9 @@ export default function TransactionFrequencyPage() {
 
   // Handle download button click
   const handleDownload = async () => {
-    const result = await downloadData(transactions, csvFields);
+    const dataToDownload =
+      transactions.length > 0 ? transactions : transactions;
+    const result = await downloadData(dataToDownload, csvFields);
 
     if (!result.success) {
       alert(result.error || "Failed to download data. Please try again.");
@@ -89,7 +95,7 @@ export default function TransactionFrequencyPage() {
   };
 
   useEffect(() => {
-    setCurrentPage(1);
+    setCurrentPage(1); // Reset to first page when search query or date range changes
   }, [searchQuery, startDate, endDate]);
 
   return (
@@ -98,15 +104,15 @@ export default function TransactionFrequencyPage() {
         Transaction Frequency
       </h1>
 
-      {/* Search and Actions */}
-      <div className="flex flex-col md:flex-row items-center mb-6 gap-4 w-full">
-        {/* Search Bar - 60% on desktop, full width on mobile */}
-        <div className="md:w-[60%] w-full">
+      {/* Search and Filter Section */}
+      <div className="flex flex-col md:flex-row items-center mb-4 gap-4 w-full mt-6">
+        {/* Search Bar - 50% */}
+        <div className="md:w-[50%] w-full">
           <Search className="w-full" onSearch={handleSearch} />
         </div>
 
-        {/* Filter and Download - 40% on desktop, full width on mobile */}
-        <div className="flex flex-col sm:flex-row gap-4 md:w-[40%] w-full">
+        {/* Filter and Download - 50% */}
+        <div className="flex flex-col sm:flex-row gap-4 md:w-[50%] w-full">
           <div className="sm:w-[50%] w-full">
             <DateRangePicker
               startDate={startDate}
@@ -116,6 +122,7 @@ export default function TransactionFrequencyPage() {
             />
           </div>
 
+          {/* Download - 50% */}
           <div className="sm:w-[50%] w-full">
             <button
               onClick={handleDownload}
@@ -143,12 +150,13 @@ export default function TransactionFrequencyPage() {
         </div>
       </div>
 
+      {/* Table Section */}
       {isLoading ? (
         <SkeletonTableLoader headings={headings} rowCount={10} />
       ) : isError ? (
-        <Error text="Something went wrong" />
+        <Error text="Error fetching transactions" />
       ) : transactions.length === 0 ? (
-        <Error text="No data found" />
+        <Error text="No transactions found" />
       ) : (
         <TransactionFrequencyTable headings={headings} data={transactions} />
       )}

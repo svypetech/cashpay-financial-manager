@@ -8,7 +8,6 @@ import DisputeResolutionPopup from "../p2pTrading/ResolveDisputePopup";
 import ChatSidebar from "../chat/ChatSidebar";
 import useFetchChat from "@/src/hooks/chat/useFetchChat";
 import { Trade } from "@/src/lib/types/Trades";
-import { ChatUser } from "@/src/lib/types/chat";
 import ExpandableId from "../ui/ExpandableId";
 import ColourfulBlock from "../ui/ColourfulBlock";
 import axios from "axios";
@@ -248,7 +247,7 @@ const P2PTableDisputed: React.FC<Props> = ({ data, headings, setData }) => {
                           alt="Options"
                           width={24}
                           height={24}
-                          className="w-4 h-4"
+                          className="w-5 h-5"
                         />
                       </button>
 

@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import type React from "react";
-import { useEffect, useState, useRef, SetStateAction } from "react";
+import { useEffect, useState, useRef } from "react";
 import StuckTradePopup from "../p2pTrading/StuckTradePopup";
 import { Trade } from "@/src/lib/types/Trades";
 import ExpandableId from "../ui/ExpandableId";
@@ -162,7 +162,7 @@ const P2PTableStuck: React.FC<Props> = ({ data, headings, setData }) => {
                           alt="Options"
                           width={24}
                           height={24}
-                          className="w-4 h-4"
+                          className="w-5 h-5"
                         />
                       </button>
 

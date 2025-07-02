@@ -3,82 +3,91 @@
 import { useState, useEffect } from "react";
 import Pagination from "../pagination/pagination";
 import ActiveUsersTable from "../tables/ActiveUsersTable";
-import useFetchUsers from "@/src/hooks/useFetchUsers";
 import SkeletonTableLoader from "../skeletons/SkeletonTableLoader";
 import Search from "../ui/Search";
 import Image from "next/image";
-import { User } from "@/src/lib/types/User";
 import Error from "../ui/Error";
-import { useDownloadData } from "@/src/hooks/useDownloadData";
 import { useDateRangeFilter } from "@/src/hooks/useSetDate";
-import { DateRangePicker } from "../ui/DateSelector";
+import useFetchUsers from "@/src/hooks/useFetchUsers";
+import { useDownloadData } from "@/src/hooks/useDownloadData";
+import DateRangePicker from "../ui/DateSelector";
+import { User } from "@/src/lib/types/User";
 
 const headings = [
   "User ID",
   "Name",
-  "Last Login",
-  "Total Logins",
-  "Session Duration",
+  "Email",
+  "Registration Date",
+  "Last Activity",
+  "Status",
 ];
-
-const csvFields = [
-  { key: "id", label: "User ID" },
-  {
-    key: "name",
-    label: "Name",
-    transform: (value: any) => {
-      if (!value) return "N/A";
-      return `${value.firstName || ""} ${value.lastName || ""}`.trim();
-    },
-  },
-  {
-    key: "lastLogin",
-    label: "Last Login",
-    transform: (value: string) => {
-      try {
-        return value ? new Date(value).toLocaleString() : "N/A";
-      } catch {
-        return "N/A";
-      }
-    },
-  },
-  { key: "totalLogin", label: "Total Logins" },
-  {
-    key: "sessionDuration",
-    label: "Session Duration",
-    transform: (value: number) => {
-      if (!value) return "N/A";
-      // Convert minutes to hours and minutes format
-      const hours = Math.floor(value / 60);
-      const minutes = value % 60;
-      return hours > 0 ? `${hours}h ${minutes}m` : `${minutes}m`;
-    },
-  },
-];
-
-
 
 export default function ActiveUsers() {
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
-  
-
   const { startDate, endDate, handleDateChange } = useDateRangeFilter();
-  const { users, totalPages, isError, isLoading } = useFetchUsers({
-    currentPage,
+  const {
+    users: fetchedUsers,
+    isLoading,
+    isError,
+    totalPages,
+  } = useFetchUsers({
+    currentPage: currentPage,
     limit: 10,
-    filterStatus: "",
-    searchQuery,
     startDate,
     endDate,
-
+    searchQuery,
   });
+  const [users, setUsers] = useState<User[]>([]);
+
+  useEffect(() => {
+    if (fetchedUsers) {
+      setUsers(fetchedUsers);
+    }
+  }, [fetchedUsers]);
 
   // Use the CSV download hook
   const { downloadData, isDownloading } = useDownloadData({
     filename: "active_users",
     dateInFilename: true,
   });
+
+  // Define CSV field mapping for Active Users
+  const csvFields = [
+    { key: "_id", label: "User ID" },
+    {
+      key: "name",
+      label: "Name",
+      transform: (value: any) => {
+        if (!value) return "N/A";
+        return `${value.firstName || ""} ${value.lastName || ""}`.trim();
+      },
+    },
+    { key: "email", label: "Email" },
+    {
+      key: "date",
+      label: "Registration Date",
+      transform: (value: string) => {
+        try {
+          return value ? new Date(value).toLocaleDateString() : "N/A";
+        } catch {
+          return "N/A";
+        }
+      },
+    },
+    {
+      key: "lastActivity",
+      label: "Last Activity",
+      transform: (value: string) => {
+        try {
+          return value ? new Date(value).toLocaleString() : "N/A";
+        } catch {
+          return "N/A";
+        }
+      },
+    },
+    { key: "userStatus", label: "Status" },
+  ];
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -98,22 +107,21 @@ export default function ActiveUsers() {
     }
   };
 
-  // Filter users based on search query only
   useEffect(() => {
-    setCurrentPage(1);
+    setCurrentPage(1); // Reset to first page when search query or date range changes
   }, [searchQuery, startDate, endDate]);
 
   return (
     <div>
       {/* Search and Filter Section */}
-      <div className="flex flex-col md:flex-row items-center mb-4 gap-4 w-full mt-6 ">
-        {/* Search Bar - 60% on desktop, full width on mobile */}
-        <div className="md:w-[60%] w-full">
+      <div className="flex flex-col md:flex-row items-center mb-4 gap-4 w-full mt-6">
+        {/* Search Bar - 60% */}
+        <div className="md:w-[50%] w-full">
           <Search className="w-full" onSearch={handleSearch} />
         </div>
 
-        {/* Filter and Download - 40% on desktop, full width on mobile */}
-        <div className="flex flex-col sm:flex-row gap-4 md:w-[40%] w-full">
+        {/* Filter and Download - 40% */}
+        <div className="flex flex-col sm:flex-row gap-4 md:w-[50%] w-full">
           <div className="sm:w-[50%] w-full">
             <DateRangePicker
               startDate={startDate}
@@ -123,6 +131,7 @@ export default function ActiveUsers() {
             />
           </div>
 
+          {/* Download - 50% */}
           <div className="sm:w-[50%] w-full">
             <button
               onClick={handleDownload}
@@ -151,9 +160,9 @@ export default function ActiveUsers() {
       {isLoading ? (
         <SkeletonTableLoader headings={headings} rowCount={10} />
       ) : isError ? (
-        <Error text="Something went wrong" />
+        <Error text="Error fetching active users" />
       ) : users.length === 0 ? (
-        <Error text="No data found" />
+        <Error text="No active users found" />
       ) : (
         <ActiveUsersTable headings={headings} data={users} />
       )}

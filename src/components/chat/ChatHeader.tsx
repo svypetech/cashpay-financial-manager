@@ -1,4 +1,3 @@
-
 import { ChatUser } from "@/src/lib/types/chat";
 import Image from "next/image";
 
@@ -13,7 +12,6 @@ export default function ChatHeader({
   onClose,
   isOnline = true,
 }: ChatHeaderProps) {
-  
   return (
     <div className="flex flex-col">
       {/* Header content */}
@@ -23,12 +21,12 @@ export default function ChatHeader({
             {/* User avatar */}
             <div className="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center bg-gray-200">
               <Image
-                src={user.userImage ? user.userImage : "/images/blank-profile.webp"}
-                alt={'User Avatar'}
+                src={user.image ? user.image : "/images/blank-profile.webp"}
+                alt={"User Avatar"}
                 width={40}
                 height={40}
                 className="w-full h-full object-cover rounded-full"
-                unoptimized={user.userImage?.includes("svg")}
+                unoptimized={user.image?.includes("svg")}
               />
             </div>
 
@@ -41,7 +39,11 @@ export default function ChatHeader({
           </div>
           <div>
             <h3 className="font-semibold font-inter">
-              {user.userName ? user.userName.firstName + " " + user.userName.lastName : user.email ? user.email : "N/A"}
+              {user.name
+                ? user.name.firstName + " " + user.name.lastName
+                : user.email
+                ? user.email
+                : "N/A"}
             </h3>
             {/* <p className="text-sm text-gray-500 font-inter">{user.userDetails}</p> */}
           </div>

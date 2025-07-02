@@ -20,8 +20,8 @@ const headings = [
 ];
 const sortOptions = [
   { label: "None", value: "" },
-  { label: "Name", value: "name" },
   { label: "ID", value: "id" },
+  { label: "Name", value: "name" },
 ];
 
 export default function Wallet() {
@@ -64,8 +64,11 @@ export default function Wallet() {
           <Error text="No data found" />
         ) : (
           <>
-            <WalletTable headings={headings} data={wallets}
-            setData={setWallets} />
+            <WalletTable
+              headings={headings}
+              data={wallets}
+              setData={setWallets}
+            />
             <Pagination
               currentPage={currentPage}
               totalPages={totalPages}

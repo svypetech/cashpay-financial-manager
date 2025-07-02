@@ -22,7 +22,7 @@ export default function Transactions() {
   const [currentPage, setCurrentPage] = useState(1);
   const [activeTab, setActiveTab] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
-  const [sortBy, setSortBy] = useState("tokenName");
+  const [sortBy, setSortBy] = useState("date");
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
