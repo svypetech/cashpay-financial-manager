@@ -10,6 +10,7 @@ import { formatNumberToTwoDecimals } from "@/src/utils/functions";
 import ConfirmModal from "../ui/ConfirmModal";
 import ExpandableId from "../ui/ExpandableId";
 import SuspendUserModal from "../ui/SuspendModal";
+import { useToast } from "@/src/providers/ToastProvider";
 
 interface Props {
   headings: string[];
@@ -18,6 +19,7 @@ interface Props {
 }
 
 const WalletTable: React.FC<Props> = ({ data, headings, setData }) => {
+  const { showSuccess, showError } = useToast();
   const [activeDropdown, setActiveDropdown] = useState<number | null>(null);
   const [showSidebar, setShowSidebar] = useState(false);
   const [selectedWallet, setSelectedWallet] = useState<Wallet | null>(null);
@@ -52,7 +54,7 @@ const WalletTable: React.FC<Props> = ({ data, headings, setData }) => {
           },
         }
       );
-      alert("User banned successfully");
+      showSuccess("Success", "User banned successfully");
       setData((prevData) =>
         prevData.map((wallet) =>
           wallet.data.user_id === userId
@@ -67,7 +69,7 @@ const WalletTable: React.FC<Props> = ({ data, headings, setData }) => {
         )
       );
     } catch (error) {
-      alert("Error banning user");
+      showError("Ban Failed", "Error banning user");
     } finally {
       setIsLoading(false);
       setActiveDropdown(null);
@@ -90,7 +92,7 @@ const WalletTable: React.FC<Props> = ({ data, headings, setData }) => {
           },
         }
       );
-      alert("User suspended successfully");
+      showSuccess("Success", "User suspended successfully");
       setData((prevData) =>
         prevData.map((wallet) =>
           wallet.data.user_id === userId
@@ -105,11 +107,11 @@ const WalletTable: React.FC<Props> = ({ data, headings, setData }) => {
         )
       );
     } catch (error) {
-      alert("Error suspending user");
+      showError("Suspend Failed", "Error suspending user");
     } finally {
       setIsLoading(false);
       setActiveDropdown(null);
-      setShowConfirmModal(false);
+      setShowSuspendModal(false);
     }
   };
 
@@ -127,7 +129,7 @@ const WalletTable: React.FC<Props> = ({ data, headings, setData }) => {
           },
         }
       );
-      alert("User activated successfully");
+      showSuccess("Success", "User activated successfully");
       setData((prevData) =>
         prevData.map((wallet) =>
           wallet.data.user_id === userId
@@ -142,7 +144,7 @@ const WalletTable: React.FC<Props> = ({ data, headings, setData }) => {
         )
       );
     } catch (error) {
-      alert("Error activating user");
+      showError("Activation Failed", "Error activating user");
     } finally {
       setIsLoading(false);
       setActiveDropdown(null);

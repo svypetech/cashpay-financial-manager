@@ -11,6 +11,7 @@ import { useDateRangeFilter } from "@/src/hooks/useSetDate";
 import useFetchUsers from "@/src/hooks/useFetchUsers";
 import { useDownloadData } from "@/src/hooks/useDownloadData";
 import DateRangePicker from "../ui/DateSelector";
+import { useToast } from "@/src/providers/ToastProvider";
 
 const headings = [
   "User ID",
@@ -21,6 +22,7 @@ const headings = [
 ];
 
 export default function UserEngagement() {
+  const { showError } = useToast();
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
   const { startDate, endDate, handleDateChange } = useDateRangeFilter();
@@ -102,7 +104,7 @@ export default function UserEngagement() {
     const result = await downloadData(dataToDownload, csvFields);
 
     if (!result.success) {
-      alert(result.error || "Failed to download data. Please try again.");
+      showError("Download Failed", result.error || "Failed to download data. Please try again.");
     }
   };
 

@@ -9,8 +9,11 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
+import { useToast } from "@/src/providers/ToastProvider";
 
 export default function SettingsPage() {
+  const { showSuccess, showError } = useToast();
+  
   // Form schema with Zod validation
   const formSchema = z.object({
     name: z.string().min(2, { message: "Name must be at least 2 characters" }),
@@ -56,7 +59,7 @@ export default function SettingsPage() {
         }
       }
     } catch (error) {
-      alert("Error loading user data");
+      showError("Error", "Failed to load user data");
     }
   }, [setValue]);
 
@@ -103,7 +106,7 @@ export default function SettingsPage() {
               "user",
               JSON.stringify({ ...user, image: uploadResponse.data.image })
             );
-            alert("Image uploaded successfully");
+            showSuccess("Success", "Image uploaded successfully");
 
             if (user && user.name && user.email) {
               setUser({
@@ -114,7 +117,7 @@ export default function SettingsPage() {
             }
           }
         } catch (error) {
-          console.error("Error uploading profile image:", error);
+          showError("Upload Failed", "Failed to upload profile image");
           // Continue with form submission even if image upload fails
         }
 
@@ -136,16 +139,18 @@ export default function SettingsPage() {
         setUser({ ...user, ...data });
         setIsEditing(false);
         setImageFile(null);
-        alert("Profile updated successfully");
+        showSuccess("Success", "Profile updated successfully");
       } else {
-        alert("Failed to update profile");
+        showError("Update Failed", "Failed to update profile");
       }
     } catch (error) {
-      alert("An error occurred while updating your profile");
+      showError("Error", "An error occurred while updating your profile");
     } finally {
       setIsSubmitting(false);
       setIsEditing(false);
-      window.location.reload(); // Reload the page to reflect changes
+      setTimeout(() => {
+        window.location.reload(); // Reload the page to reflect changes
+      }, 1500);
     }
   };
 
@@ -159,7 +164,7 @@ export default function SettingsPage() {
           setImage(user.image || "/images/user-avatar.png");
         }
       } catch (error) {
-        alert("Error discarding changes");
+        showError("Error", "Failed to discard changes");
       }
     }
     setIsEditing(!isEditing);
@@ -191,7 +196,7 @@ export default function SettingsPage() {
       setShowDeleteDialog(false);
       window.location.href = "/signin";
     } catch (error) {
-      alert("Failed to delete account");
+      showError("Delete Failed", "Failed to delete account");
     } finally {
       setIsSubmitting(false);
     }

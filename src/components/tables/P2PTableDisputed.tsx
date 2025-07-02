@@ -13,6 +13,7 @@ import ColourfulBlock from "../ui/ColourfulBlock";
 import axios from "axios";
 import { shortenAddress } from "@/src/utils/functions";
 import DisputeSkeletonCard from "../skeletons/DisputeSkeletonCard";
+import { useToast } from "@/src/providers/ToastProvider";
 
 interface Props {
   headings: string[];
@@ -35,6 +36,7 @@ interface SellerBuyer {
 }
 
 const P2PTableDisputed: React.FC<Props> = ({ data, headings, setData }) => {
+  const { showSuccess, showError } = useToast();
   const [activeDropdown, setActiveDropdown] = useState<number | null>(null);
   const [showResolvePopup, setShowResolvePopup] = useState(false);
   const [favor, setFavor] = useState<string>("");
@@ -90,7 +92,7 @@ const P2PTableDisputed: React.FC<Props> = ({ data, headings, setData }) => {
         buyer: response.data.data.buyer,
       });
     } catch (error: any) {
-      alert(JSON.stringify(error.response.data.message));
+      showError("Fetch Failed", error.response?.data?.message || "Failed to fetch seller/buyer details");
     } finally {
       setIsFetchingSeller(false);
     }
@@ -144,7 +146,7 @@ const P2PTableDisputed: React.FC<Props> = ({ data, headings, setData }) => {
           },
         }
       );
-      alert("Dispute resolved successfully: " + JSON.stringify(response.data));
+      showSuccess("Success", "Dispute resolved successfully");
       setData((prevTrades) =>
         prevTrades.map((trade) =>
           trade.tradeId === selectedTrade?.tradeId
@@ -153,7 +155,7 @@ const P2PTableDisputed: React.FC<Props> = ({ data, headings, setData }) => {
         )
       );
     } catch (error: any) {
-      alert(error.response.data.message);
+      showError("Resolution Failed", error.response?.data?.message || "Failed to resolve dispute");
     } finally {
       setShowResolvePopup(false);
       setIsSubmitting(false);

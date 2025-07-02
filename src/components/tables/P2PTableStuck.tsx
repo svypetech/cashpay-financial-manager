@@ -9,6 +9,7 @@ import ExpandableId from "../ui/ExpandableId";
 import ColourfulBlock from "../ui/ColourfulBlock";
 import axios from "axios";
 import ConfirmModal from "../ui/ConfirmModal";
+import { useToast } from "@/src/providers/ToastProvider";
 
 interface Props {
   headings: string[];
@@ -17,6 +18,7 @@ interface Props {
 }
 
 const P2PTableStuck: React.FC<Props> = ({ data, headings, setData }) => {
+  const { showSuccess, showError } = useToast();
   const [activeDropdown, setActiveDropdown] = useState<number | null>(null);
   const [showPopup, setShowPopup] = useState(false);
   const [selectedTrade, setSelectedTrade] = useState<Trade | null>(null);
@@ -33,8 +35,7 @@ const P2PTableStuck: React.FC<Props> = ({ data, headings, setData }) => {
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
-    // Simulate a network request
-    alert("Selected ID: " + selectedTrade?.tradeId);
+    // Submit the dispute resolution
     try {
       let response = await axios.put(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}transaction/order/resolveDispute`,
@@ -57,9 +58,9 @@ const P2PTableStuck: React.FC<Props> = ({ data, headings, setData }) => {
             : trade
         )
       );
-      alert("Dispute resolved successfully: " + JSON.stringify(response.data));
+      showSuccess("Success", "Dispute resolved successfully");
     } catch (error: any) {
-      alert(error.response.data.message);
+      showError("Resolution Failed", error.response?.data?.message || "Failed to resolve dispute");
     } finally {
       setShowResolvePopup(false);
       setIsSubmitting(false);

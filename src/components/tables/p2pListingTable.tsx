@@ -9,6 +9,7 @@ import ColourfulBlock from "../ui/ColourfulBlock";
 import ExpandableId from "../ui/ExpandableId";
 import ConfirmModal from "../ui/ConfirmModal";
 import axios from "axios";
+import { useToast } from "@/src/providers/ToastProvider";
 
 interface Props {
   headings: string[];
@@ -17,6 +18,7 @@ interface Props {
 }
 
 const ListingsTable: React.FC<Props> = ({ data, headings }) => {
+  const { showSuccess, showError } = useToast();
   const [activeDropdown, setActiveDropdown] = useState<number | null>(null);
   const [showPopup, setShowPopup] = useState(false);
   const [selectedListing, setSelectedListing] = useState<Listing>(
@@ -76,15 +78,15 @@ const ListingsTable: React.FC<Props> = ({ data, headings }) => {
           },
         }
       );
-      console.log("Response:", response.data);
+      
       if (response.data.success) {
-        alert("listing deleted successfully");
+        showSuccess("Success", "Listing deleted successfully");
       } else {
-        alert("Failed to delete listing");
+        showError("Delete Failed", "Failed to delete listing");
       }
     } catch (error) {
-      console.error("Error deleting:", error);
-      alert("Error deleting listing");
+      
+      showError("Error", "Error deleting listing");
     } finally {
       setIsSubmitting(false);
       setShowConfirmModal(false);

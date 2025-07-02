@@ -29,7 +29,7 @@ export default function DisputeDetailsCard({
   title = "Buyer Details",
   user,
   buttonText,
-  onButtonClick = () => console.log("Button clicked"),
+  onButtonClick = () => {},
   isResolved,
 }: BuyerDetailsCardProps) {
   return (

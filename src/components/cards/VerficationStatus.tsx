@@ -19,7 +19,7 @@ export default function VerificationSteps({
     { title: "Documents", completed: false },
     { title: "Selfie", completed: false },
   ],
-  onStartVerification = () => console.log("Start verification"),
+  onStartVerification = () => {},
 }: VerificationStepsProps) {
   return (
     <div className="w-full max-w-md mx-auto font-[satoshi] mb-15">

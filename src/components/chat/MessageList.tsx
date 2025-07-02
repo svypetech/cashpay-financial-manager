@@ -125,7 +125,6 @@ export default function MessageList({
         }
       }
     } catch (error) {
-      console.error("Date formatting error:", error);
       return dateString; // Return original on error
     }
   };

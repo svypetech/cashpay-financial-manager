@@ -10,6 +10,7 @@ import ColourfulBlock from "../ui/ColourfulBlock";
 import axios from "axios";
 import ConfirmModal from "../ui/ConfirmModal";
 import ExpandableId from "../ui/ExpandableId";
+import { useToast } from "@/src/providers/ToastProvider";
 interface Props {
   headings: string[];
   data: Trade[];
@@ -17,6 +18,7 @@ interface Props {
 }
 
 const P2PTableActive: React.FC<Props> = ({ data, headings, setData }) => {
+  const { showSuccess, showError } = useToast();
   const [activeDropdown, setActiveDropdown] = useState<number | null>(null);
   const [showPopup, setShowPopup] = useState(false);
   const [selectedTrade, setSelectedTrade] = useState<Trade | null>(null);
@@ -32,7 +34,7 @@ const P2PTableActive: React.FC<Props> = ({ data, headings, setData }) => {
   const handleSubmit = async () => {
     setIsSubmitting(true);
 
-    // Simulate a network request
+    // Resolve the dispute in favor of seller
     try {
       let response = await axios.put(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}transaction/order/resolveDispute`,
@@ -47,7 +49,7 @@ const P2PTableActive: React.FC<Props> = ({ data, headings, setData }) => {
           },
         }
       );
-      alert("Dispute resolved successfully: " + JSON.stringify(response.data));
+      showSuccess("Success", "Dispute resolved successfully");
       // update the local state to canceled
       setData((prevTrades) =>
         prevTrades.map((trade) =>
@@ -57,7 +59,7 @@ const P2PTableActive: React.FC<Props> = ({ data, headings, setData }) => {
         )
       );
     } catch (error: any) {
-      alert("Could not resolve due to insufficient balance");
+      showError("Resolution Failed", "Could not resolve due to insufficient balance");
     } finally {
       setShowResolvePopup(false);
       setIsSubmitting(false);

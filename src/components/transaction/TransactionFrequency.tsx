@@ -11,6 +11,7 @@ import { useDateRangeFilter } from "@/src/hooks//useSetDate";
 import useFetchTransactions from "@/src/hooks/useFetchTransactions";
 import { useDownloadData } from "@/src/hooks/useDownloadData";
 import DateRangePicker from "../ui/DateSelector";
+import { useToast } from "@/src/providers/ToastProvider";
 
 const headings = [
   "Transaction ID",
@@ -22,6 +23,7 @@ const headings = [
 ];
 
 export default function TransactionFrequencyPage() {
+  const { showError } = useToast();
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
   const { startDate, endDate, handleDateChange } = useDateRangeFilter();
@@ -90,7 +92,7 @@ export default function TransactionFrequencyPage() {
     const result = await downloadData(dataToDownload, csvFields);
 
     if (!result.success) {
-      alert(result.error || "Failed to download data. Please try again.");
+      showError("Download Failed", result.error || "Failed to download data. Please try again.");
     }
   };
 

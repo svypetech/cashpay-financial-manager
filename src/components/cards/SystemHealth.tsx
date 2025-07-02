@@ -34,7 +34,7 @@ const SystemHealthGauge = ({ value = 75 }) => {
   };
 
   const handleDetailsClick = () => {
-    console.log("Details clicked");
+    // Handle details click
   };
 
   return (
