@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { Trade } from "../../lib/types/Trades";
+import { handleTokenExpiration } from "@/src/utils/functions";
 interface FetchActiveTradesParams {
   currentPage: number;
   limit: number;
@@ -52,7 +53,14 @@ export default function useFetchActiveTrades({
         const data = await response.data;
         setActiveTrades(data.order);
         setTotalPages(data.totalPages);
-      } catch (error) {
+      } catch (error: any) {
+        if (error.response?.status === 401 || 
+            error.response?.data?.statusCode === 401 ||
+            error.response?.data?.message?.includes("Invalid or expired token")) {
+          console.log("Token expired or invalid, redirecting to sign-in");
+          handleTokenExpiration();
+          return; // Don't set error state, just redirect
+        }
         setIsError(true);
       } finally {
         setIsLoading(false);

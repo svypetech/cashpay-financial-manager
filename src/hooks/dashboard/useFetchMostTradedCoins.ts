@@ -1,5 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { handleTokenExpiration } from "@/src/utils/functions";
 
 export default function useFetchMostTradedCoins() {
   const [mostTradedCoins, setmostTradedCoins] = useState([]);
@@ -20,7 +21,14 @@ export default function useFetchMostTradedCoins() {
           }
         );
         setmostTradedCoins(response.data.tokens);
-      } catch (error) {
+      } catch (error: any) {
+        if (error.response?.status === 401 || 
+            error.response?.data?.statusCode === 401 ||
+            error.response?.data?.message?.includes("Invalid or expired token")) {
+          console.log("Token expired or invalid, redirecting to sign-in");
+          handleTokenExpiration();
+          return; // Don't set error state, just redirect
+        }
         setIsError(true);
       } finally {
         setIsLoading(false);

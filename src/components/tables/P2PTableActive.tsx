@@ -2,15 +2,15 @@
 
 import Image from "next/image";
 import type React from "react";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import TradeDetailsPopup from "../p2pTrading/TradeDetailsPopup";
-
-import { Trade } from "@/src/lib/types/Trades";
 import ColourfulBlock from "../ui/ColourfulBlock";
 import axios from "axios";
 import ConfirmModal from "../ui/ConfirmModal";
 import ExpandableId from "../ui/ExpandableId";
+import { Trade } from "@/src/lib/types/Trades";
 import { useToast } from "@/src/providers/ToastProvider";
+
 interface Props {
   headings: string[];
   data: Trade[];
@@ -22,57 +22,12 @@ const P2PTableActive: React.FC<Props> = ({ data, headings, setData }) => {
   const [activeDropdown, setActiveDropdown] = useState<number | null>(null);
   const [showPopup, setShowPopup] = useState(false);
   const [selectedTrade, setSelectedTrade] = useState<Trade | null>(null);
-  const tableRef = useRef<HTMLDivElement>(null);
-  const dropdownRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [showResolvePopup, setShowResolvePopup] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState<number>(0);
-  const needsPadding =
-    activeDropdown !== null &&
-    (selectedIndex >= data.length - 2 || data.length <= 2);
 
-  const handleSubmit = async () => {
-    setIsSubmitting(true);
-
-    // Resolve the dispute in favor of seller
-    try {
-      let response = await axios.put(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}transaction/order/resolveDispute`,
-        {
-          orderId: selectedTrade ? selectedTrade.tradeId : "",
-          favourOf: "Seller",
-          comment: "Resolved in favour of seller, from active tabs",
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
-      showSuccess("Success", "Dispute resolved successfully");
-      // update the local state to canceled
-      setData((prevTrades) =>
-        prevTrades.map((trade) =>
-          trade.tradeId === selectedTrade?.tradeId
-            ? { ...trade, status: "Canceled" }
-            : trade
-        )
-      );
-    } catch (error: any) {
-      showError("Resolution Failed", "Could not resolve due to insufficient balance");
-    } finally {
-      setShowResolvePopup(false);
-      setIsSubmitting(false);
-    }
-  };
-
-  const toggleDropdown = (index: number) => {
-    setSelectedIndex(index); // Set selected index first
-    setActiveDropdown(activeDropdown === index ? null : index);
-  };
-
+  // Simple dropdown logic: close on outside click
   useEffect(() => {
-    // Close dropdown when clicking outside
     const handleClickOutside = (event: MouseEvent) => {
       if (activeDropdown !== null) {
         const target = event.target as HTMLElement;
@@ -88,16 +43,63 @@ const P2PTableActive: React.FC<Props> = ({ data, headings, setData }) => {
     };
   }, [activeDropdown]);
 
+  const toggleDropdown = (index: number) => {
+    setSelectedIndex(index); // Set selected index first
+    setActiveDropdown(activeDropdown === index ? null : index);
+  };
+
+  const handleSubmit = async () => {
+    setIsSubmitting(true);
+
+    try {
+      let response = await axios.put(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}transaction/order/cancelOrder`,
+        {
+          orderId: selectedTrade ? selectedTrade.tradeId : "",
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      if (response.data.success === true) {
+        showSuccess("Trade canceled successfully");
+      } else {
+        showError("Failed to cancel trade");
+      }
+      // update the local state to canceled
+      setData((prevTrades) =>
+        prevTrades.map((trade) =>
+          trade.tradeId === selectedTrade?.tradeId
+            ? { ...trade, status: "Canceled" }
+            : trade
+        )
+      );
+    } catch (error: any) {
+      console.error("Error canceling trade:", error);
+      showError("Failed to cancel trade");
+    } finally {
+      setShowResolvePopup(false);
+      setIsSubmitting(false);
+    }
+  };
+
+  // Calculate if we need padding based on current state
+  const needsPadding =
+    activeDropdown !== null &&
+    (selectedIndex >= data.length - 1 || // Last two rows
+      data.length <= 1); // If there are 2 or fewer rows, always add padding
+
   return (
     <div className="flex-1 rounded-lg w-full py-5">
-      {/* Table */}
+      {/* Table - Add dynamic padding for dropdown space */}
       <div
-        className={`rounded-lg overflow-x-auto w-full pb-[30px] ${
-          needsPadding ? "pb-28" : ""
+        className={`rounded-lg overflow-x-auto w-full ${
+          needsPadding ? "pb-16" : ""
         }`}
-        ref={tableRef}
       >
-        <table className="w-full text-left  min-w-[1000px] ">
+        <table className="w-full text-left min-w-[900px]">
           <thead className="bg-secondary/10">
             <tr className="font-satoshi text-[12px] md:text-[16px] py-3 md:py-4 px-2 md:px-4">
               {headings.map((heading, index) => (
@@ -138,17 +140,17 @@ const P2PTableActive: React.FC<Props> = ({ data, headings, setData }) => {
                   <td className="px-2 sm:px-4 py-3 sm:py-4 font-satoshi">
                     <ColourfulBlock
                       text={trade.status}
-                      className={`text-center md:text-md font-semibold ${
+                      className={`text-center rounded-xl md:text-md font-semibold ${
                         trade.status.toLowerCase() === "canceled"
-                          ? "bg-fail/20 text-fail"
+                          ? "bg-[#DF1D1D33] text-[#DF1D1D]"
                           : "text-[#727272] bg-[#72727233]"
                       }`}
                     />
                   </td>
                   <td className="relative px-2 md:px-4 py-3 md:py-4 font-satoshi min-w-[60px] text-center">
-                    <div className="dropdown-container relative">
+                    <div className="dropdown-container relative inline-block">
                       <button
-                        className="flex items-center justify-center w-[80%] lg:w-[100%] xl:w-[70%] 2xl:w-[50%]  cursor-pointer"
+                        className="relative cursor-pointer"
                         onClick={() => toggleDropdown(index)}
                       >
                         <Image
@@ -161,33 +163,34 @@ const P2PTableActive: React.FC<Props> = ({ data, headings, setData }) => {
                       </button>
 
                       {activeDropdown === index && (
-                        <div
-                          className="absolute z-10 right-0 w-40 bg-white rounded-md shadow-lg py-1 border border-gray-100"
-                          ref={(el) => {
-                            dropdownRefs.current[index] = el;
-                          }}
-                        >
+                        <div className="absolute z-10 right-0 top-full mt-2 w-40 bg-white rounded-md shadow-lg py-1 border border-gray-100">
                           <button
                             className="block w-full text-left px-4 py-2 text-sm text-primary font-bold cursor-pointer hover:bg-gray-50"
                             onClick={() => {
                               setSelectedTrade(trade);
                               setShowPopup(true);
+                              setActiveDropdown(null);
                             }}
                           >
                             View Details
                           </button>
                           <div className="border-t border-gray-100"></div>
                           <button
-                            className={`block w-full text-left px-4 py-2 text-sm text-red-500 font-bold  hover:bg-gray-50 ${
-                              trade.status.toLowerCase() === "canceled"
+                            className={`block w-full text-left px-4 py-2 text-sm text-red-500 font-bold hover:bg-gray-50 ${
+                              trade.status.toLowerCase() === "canceled" ||
+                              trade.status.toLowerCase() === "resolved"
                                 ? "opacity-50 cursor-not-allowed"
                                 : "cursor-pointer"
                             }`}
                             onClick={() => {
                               setSelectedTrade(trade);
                               setShowResolvePopup(true);
+                              setActiveDropdown(null);
                             }}
-                            disabled={trade.status.toLowerCase() === "canceled"}
+                            disabled={
+                              trade.status.toLowerCase() === "canceled" ||
+                              trade.status.toLowerCase() === "resolved"
+                            }
                           >
                             Cancel trade
                           </button>
@@ -201,7 +204,6 @@ const P2PTableActive: React.FC<Props> = ({ data, headings, setData }) => {
         </table>
       </div>
 
-      {/* Trade Details Popup */}
       {selectedTrade && (
         <TradeDetailsPopup
           showPopup={showPopup}
@@ -211,7 +213,6 @@ const P2PTableActive: React.FC<Props> = ({ data, headings, setData }) => {
       )}
 
       {/* Show confirm modal from ui folder */}
-
       <ConfirmModal
         isOpen={showResolvePopup}
         isLoading={isSubmitting}

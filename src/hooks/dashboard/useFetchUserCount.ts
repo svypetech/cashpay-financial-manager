@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { handleTokenExpiration } from "@/src/utils/functions";
 
 type DashboardUserCount = {
   success: boolean;
@@ -29,7 +30,14 @@ export default function useFetchDashboardUsersCount() {
           }
         );
         setUserCount(response.data);
-      } catch (error) {
+      } catch (error: any) {
+        if (error.response?.status === 401 || 
+            error.response?.data?.statusCode === 401 ||
+            error.response?.data?.message?.includes("Invalid or expired token")) {
+          console.log("Token expired or invalid, redirecting to sign-in");
+          handleTokenExpiration();
+          return; // Don't set error state, just redirect
+        }
         setIsError(true);
       } finally {
         setIsLoading(false);

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { handleTokenExpiration } from "@/src/utils/functions";
 export default function useFetchP2PListing({
   currentPage,
   limit,
@@ -52,7 +53,14 @@ export default function useFetchP2PListing({
 
         setListings(response.data.add.data);
         setTotalPages(response.data.add.totalPages);
-      } catch (error) {
+      } catch (error: any) {
+        if (error.response?.status === 401 || 
+            error.response?.data?.statusCode === 401 ||
+            error.response?.data?.message?.includes("Invalid or expired token")) {
+          console.log("Token expired or invalid, redirecting to sign-in");
+          handleTokenExpiration();
+          return; // Don't set error state, just redirect
+        }
         setIsError(true);
         setListings([]);
       } finally {

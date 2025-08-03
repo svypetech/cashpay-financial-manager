@@ -98,3 +98,13 @@ export const AuthenticateUser = () => {
     return true;
   }
 };
+
+export const handleTokenExpiration = () => {
+  // Clear user data from localStorage
+  localStorage.removeItem("token");
+  localStorage.removeItem("user");
+
+  // Redirect to sign-in page
+  window.location.href = "/signin"; // Adjust the path as needed
+};
+  
