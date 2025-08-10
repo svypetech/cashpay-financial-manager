@@ -6,19 +6,42 @@ import UserInsightsSkeleton from "../skeletons/UserInsightsSkeleton";
 import Error from "../ui/Error";
 import useFetchUserInsights from "@/src/hooks/dashboard/useFetchUserInsights";
 import useFetchMostTradedCoins from "@/src/hooks/dashboard/useFetchMostTradedCoins";
+import useFetchTransactionFrequency from "@/src/hooks/dashboard/useFetchTransactionFrequency";
+import TransactionFrequencySkeleton from "../skeletons/TransactionFrequencySkeleton";
 
 export default function UserInsightsPage() {
   const { userInsights, isLoading, isError } = useFetchUserInsights();
-  const {mostTradedCoins,isLoading:isLoadingCoins,isError:isCoinsError} = useFetchMostTradedCoins()
+  const {
+    mostTradedCoins,
+    isLoading: isLoadingCoins,
+    isError: isCoinsError,
+  } = useFetchMostTradedCoins();
+  const {
+    transactionFrequencyData,
+    isLoading: isLoadingTxFrequency,
+    isError: isTxFrequencyError,
+  } = useFetchTransactionFrequency();
   return (
     <main className="">
       {/* Top Row - Cryptocurrencies and Transaction Frequency */}
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 mb-6">
         <div className="lg:col-span-3">
-          <MostTradedCryptocurrencies coins={mostTradedCoins} isLoading={isLoadingCoins} isError={isCoinsError} />
+          <MostTradedCryptocurrencies
+            coins={mostTradedCoins}
+            isLoading={isLoadingCoins}
+            isError={isCoinsError}
+          />
         </div>
         <div className="lg:col-span-2">
-          <TransactionFrequency />
+          {isLoadingTxFrequency ? (
+            <TransactionFrequencySkeleton />
+          ) : isTxFrequencyError ? (
+            <Error text="Failed to load transaction frequency data" />
+          ) : transactionFrequencyData ? (
+            <TransactionFrequency data={transactionFrequencyData} />
+          ) : (
+            <Error text="No transaction frequency data available" />
+          )}
         </div>
       </div>
 

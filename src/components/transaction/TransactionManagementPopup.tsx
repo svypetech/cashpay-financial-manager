@@ -189,7 +189,7 @@ export default function TransactionManagementPopup({
                         ? "text-yellow-500"
                         : "text-red-500"
                     }`}
-                  ></span>
+                  >{transaction.status}</span>
                 </div>
 
                 {/* Block */}
